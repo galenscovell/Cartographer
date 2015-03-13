@@ -1,65 +1,91 @@
 
 /**
- * Main Game class for my explorations in Java game development.
+ * Main class for entry into application.
  */
+
+import ui.World;
 
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 
-public class Game extends Canvas {
-    private BufferStrategy buffstrat;
-    private boolean running = true;
+public class Game extends Canvas implements Runnable {
+    public static int windowX  = 720;
+    public static int windowY  = 480;
+    public static int cellSize = 13;
+    public static int margin   = 2;
+
+    private boolean running = false;
+    private World world;
+    private JFrame frame;
 
     public Game() {
-        JFrame container = new JFrame("Java Game Development");
-        JPanel panel = (JPanel) container.getContentPane();
-        panel.setPreferredSize(new Dimension(800, 600));
-
-        panel.setLayout(null);
-        setBounds(0, 0, 800, 600);
-        panel.add(this);
-        setIgnoreRepaint(true);
-
-        container.pack();
-        container.setResizable(false);
-        container.setVisible(true);
-
-        createBufferStrategy(2);
-        buffstrat = getBufferStrategy();
-
-        gameLoop();
+        Dimension size = new Dimension(windowX, windowY);
+        setPreferredSize(size);
+        this.world = new World(windowX, windowY, cellSize, margin);
+        this.frame = new JFrame();
     }
 
-    public void gameLoop() {
-        long lastLoopTime = System.currentTimeMillis();
+    public synchronized void start() {
+        this.running = true;
+        Thread thread = new Thread(this);
+        thread.start(); // calls run()
+    }
 
-        // Main loop
-        while (running) {
-            long delta = System.currentTimeMillis() - lastLoopTime;
-            lastLoopTime = System.currentTimeMillis();
+    public synchronized void stop() throws Exception {
+        this.running = false;
+    }
 
-            Graphics2D g = (Graphics2D) buffstrat.getDrawGraphics();
-            g.setColor(Color.black);
-            g.fillRect(0, 0, 800, 600);
-
-            g.dispose();
-            buffstrat.show();
-
-            try {
-                Thread.sleep(10);
-            } catch (Exception e) {}
+    public void run() {
+        while (this.running) {
+            update();
+            render();
         }
     }
 
+    public void update() {
+        try { 
+            Thread.sleep(10);
+        } catch (Exception e) {}
+    }
+
+    public void render() {
+        BufferStrategy bs = getBufferStrategy();
+        if (bs == null) {
+            createBufferStrategy(3);
+            return;
+        }
+
+        Graphics g = (Graphics2D) bs.getDrawGraphics();
+        // Clear screen
+        g.setColor(new Color(62, 70, 73));
+        g.fillRect(0, 0, getWidth(), getHeight());
+
+        this.world.render(g);
+
+        g.dispose();
+        bs.show();
+    }
+
+
     public static void main(String[] args) {
-        new Game();
+        Game game = new Game();
+
+        game.frame.setResizable(false);
+        game.frame.setTitle("Cave Creator");
+        game.frame.add(game);
+        game.frame.pack();
+        game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        game.frame.setLocationRelativeTo(null);
+        game.frame.setVisible(true);
+
+        game.start();
     }
 }
