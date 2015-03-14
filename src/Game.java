@@ -22,9 +22,16 @@ public class Game extends Canvas implements Runnable {
     public static int cellSize = 13;
     public static int margin   = 2;
 
+    public int ticks = 100;
+
     private boolean running = false;
     private World world;
     private JFrame frame;
+
+    final int FPS = 20;
+    final int SKIP_TICKS = 1000 / FPS;
+    final int MAX_FRAMESKIP = 5;
+
 
     public Game() {
         Dimension size = new Dimension(windowX, windowY);
@@ -34,10 +41,12 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
+        // Constuct initial world grid
         this.world.build();
+
         this.running = true;
         Thread thread = new Thread(this);
-        thread.start(); // calls run()
+        thread.start(); // call run()
     }
 
     public synchronized void stop() throws Exception {
@@ -45,16 +54,25 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void run() {
-        while (this.running) {
-            update();
-            render();
+        double nextTick = System.currentTimeMillis();
+        int loops;
+
+        // Main loop
+        while (this.running && this.ticks > 0) {
+            loops = 0;
+            while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
+                update();
+                render();
+
+                nextTick += SKIP_TICKS;
+                loops++;
+                this.ticks--;
+            }
         }
     }
 
     public void update() {
-        try { 
-            Thread.sleep(10);
-        } catch (Exception e) {}
+        
     }
 
     public void render() {
@@ -66,9 +84,9 @@ public class Game extends Canvas implements Runnable {
 
         Graphics g = (Graphics2D) bs.getDrawGraphics();
         // Clear screen
-        g.setColor(new Color(0x34495e));
+        g.setColor(new Color(0x2c3e50));
         g.fillRect(0, 0, getWidth(), getHeight());
-
+        // Render next world frame
         this.world.render(g);
 
         g.dispose();

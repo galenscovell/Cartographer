@@ -13,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class World extends Canvas {
@@ -21,8 +20,7 @@ public class World extends Canvas {
     private int height;
     private int cellSize;
     private int margin;
-
-    private List<Cell> grid;
+    private ArrayList<Cell> grid;
     
 
     public World(int width, int height, int cellSize, int margin) {
@@ -30,7 +28,6 @@ public class World extends Canvas {
         this.height = height;
         this.cellSize = cellSize;
         this.margin = margin;
-
         this.grid = new ArrayList<Cell>();
     }
 
