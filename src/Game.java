@@ -3,7 +3,7 @@
  * Main class for entry into application.
  */
 
-import ui.World;
+import graphics.World;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -34,6 +34,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
+        this.world.build();
         this.running = true;
         Thread thread = new Thread(this);
         thread.start(); // calls run()
@@ -65,7 +66,7 @@ public class Game extends Canvas implements Runnable {
 
         Graphics g = (Graphics2D) bs.getDrawGraphics();
         // Clear screen
-        g.setColor(new Color(62, 70, 73));
+        g.setColor(new Color(0x34495e));
         g.fillRect(0, 0, getWidth(), getHeight());
 
         this.world.render(g);
