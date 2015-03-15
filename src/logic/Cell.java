@@ -30,15 +30,23 @@ public class Cell {
         }
     }
 
-    public int getX() {
+    public int getScreenX() {
         return this.screenX;
     }
 
-    public int getY() {
+    public int getScreenY() {
         return this.screenY;
     }
 
+    public int getGridX() {
+        return this.gridX;
+    }
+
+    public int getGridY() {
+        return this.gridY;
+    }
+
     public String toString() {
-        return "Cell at [" + screenX + ", " + screenY + "] (" + gridX + ", " + gridY + "]";
+        return "Cell at [" + screenX + ", " + screenY + "] (" + gridX + ", " + gridY + ")";
     }
 }

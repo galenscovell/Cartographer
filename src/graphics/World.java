@@ -18,8 +18,8 @@ import java.util.List;
 
 
 public class World extends Canvas {
-    private int rows;
     private int columns;
+    private int rows;
     private int cellSize;
     private int margin;
 
@@ -28,8 +28,8 @@ public class World extends Canvas {
     
 
     public World(int width, int height, int cellSize, int margin) {
-        this.rows = height / (cellSize + margin);
         this.columns = width / (cellSize + margin);
+        this.rows = height / (cellSize + margin);
         this.cellSize = cellSize;
         this.margin = margin;
 
@@ -38,19 +38,39 @@ public class World extends Canvas {
     }
 
     public void build() {
-        int absoluteX;
-        int absoluteY;
-        for (int x = 0; x < this.columns; x++) {
-            for (int y = 0; y < this.rows; y++) {
-                absoluteX = (x * (this.cellSize + this.margin)) + this.margin;
-                absoluteY = (y * (this.cellSize + this.margin)) + this.margin;
-                this.cells.add(new Cell(absoluteX, absoluteY, x, y));
-                this.grid[x][y] = 0;
+        int screenX;
+        int screenY;
+        for (int column = 0; column < this.columns; column++) {
+            for (int row = 0; row < this.rows; row++) {
+                screenX = (column * (this.cellSize + this.margin)) + this.margin;
+                screenY = (row * (this.cellSize + this.margin)) + this.margin;
+                this.cells.add(new Cell(screenX, screenY, column, row));
+                this.grid[column][row] = 0;
             }
         }
-        this.grid[25][10] = 1;
-        this.grid[25][9] = 1;
-        this.grid[24][10] = 1;
+        this.grid[1][0] = 1;
+
+        findAdjacent(cells.get(1));
+    }
+
+    public void findAdjacent(Cell cell) {
+        System.out.println(cell);
+        int sumX;
+        int sumY;
+
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                sumX = cell.getGridX() + x;
+                sumY = cell.getGridY() + y;
+                // If values equal self
+                if (sumX == cell.getGridX() && sumY == cell.getGridY()) {
+                    continue;
+                } else if (isOutOfBounds(sumX, sumY)) {
+                    continue;
+                }
+                System.out.println(sumX + ", " + sumY);
+            }
+        }
     }
 
     public boolean isOutOfBounds(int x, int y) {
@@ -74,7 +94,7 @@ public class World extends Canvas {
             } else {
                 g.setColor(new Color(0x34495e));
             }
-            g.fillRect(cell.getX(), cell.getY(), this.cellSize, this.cellSize);
+            g.fillRect(cell.getScreenX(), cell.getScreenY(), this.cellSize, this.cellSize);
         }
     }
 }
