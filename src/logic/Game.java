@@ -25,7 +25,7 @@ public class Game extends Canvas implements Runnable {
     private int cellSize = 13;
     private int margin   = 2;
 
-    private int ticks = 100;
+    private int ticks = 5;
 
     private boolean running = false;
     private World world;

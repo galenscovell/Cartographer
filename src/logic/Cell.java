@@ -30,6 +30,14 @@ public class Cell {
         }
     }
 
+    public boolean isWall(int[][] grid) {
+        if (grid[this.gridX][this.gridY] == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public int getScreenX() {
         return this.screenX;
     }

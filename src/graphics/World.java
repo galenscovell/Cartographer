@@ -8,7 +8,6 @@ package graphics;
 
 import logic.Cell;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class World extends Canvas {
+public class World {
     private int columns;
     private int rows;
     private int cellSize;
@@ -50,11 +49,15 @@ public class World extends Canvas {
                 screenY = (y * (this.cellSize + this.margin)) + this.margin;
                 this.cells.add(new Cell(screenX, screenY, x, y));
 
-                chance = random.nextInt(100);
-                if (chance > 80) {
-                    this.grid[x][y] = 1;
+                if (x == 0 || y == 0 || x == this.columns - 1 || y == this.rows - 1) {
+                    this.grid[x][y] = 2;
                 } else {
-                    this.grid[x][y] = 0;
+                    chance = random.nextInt(100);
+                    if (chance < 45) {
+                        this.grid[x][y] = 1;
+                    } else {
+                        this.grid[x][y] = 0;
+                    }
                 }
             }
         }
@@ -82,6 +85,7 @@ public class World extends Canvas {
         return activeNeighbors;
     }
 
+    
     public boolean isOutOfBounds(int x, int y) {
         if (x < 0 || y < 0){
             return true;
@@ -92,29 +96,37 @@ public class World extends Canvas {
         }
     }
 
-    public void evolveCell(int growthValue, Cell cell) {
-        if (growthValue < 2 || growthValue > 3) {
-            grid[cell.getGridX()][cell.getGridY()] = 0;
+    public void smooth(int growthValue, Cell cell) {
+        if (growthValue >= 1 && growthValue <= 5) {
+            grid[cell.getGridX()][cell.getGridY()] = 1;
         } else if (growthValue == 3) {
             grid[cell.getGridX()][cell.getGridY()] = 1;
+        } else {
+            grid[cell.getGridX()][cell.getGridY()] = 0;
         }
     }
 
     public void update() {
         for (Cell cell : this.cells) {
-            cell.growthValue = checkAdjacent(cell);
+            if (!cell.isWall(this.grid)){
+                cell.growthValue = checkAdjacent(cell);
+            }
         }
         for (Cell cell : this.cells) {
-            evolveCell(cell.growthValue, cell);
+            if (!cell.isWall(this.grid)){
+                smooth(cell.growthValue, cell);;
+            }
         }
     }
 
     public void render(Graphics g) {
         for (Cell cell : this.cells) {
             if (cell.isActive(this.grid)) {
-                g.setColor(new Color(0x27ae60));
-            } else {
                 g.setColor(new Color(0x34495e));
+            } else if (cell.isWall(this.grid)) {
+                g.setColor(new Color(0x2980b9));
+            } else {
+                g.setColor(new Color(0x27ae60));
             }
             g.fillRect(cell.getScreenX(), cell.getScreenY(), this.cellSize, this.cellSize);
         }
