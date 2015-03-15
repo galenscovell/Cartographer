@@ -1,7 +1,10 @@
 
 /**
- * Main class for entry into application.
+ * GAME CLASS
+ * Responsible for handling of game loop.
  */
+
+package logic;
 
 import graphics.World;
 
@@ -17,12 +20,12 @@ import javax.swing.JFrame;
 
 
 public class Game extends Canvas implements Runnable {
-    public static int windowX  = 720;
-    public static int windowY  = 480;
-    public static int cellSize = 13;
-    public static int margin   = 2;
+    private int windowX  = 722;
+    private int windowY  = 482;
+    private int cellSize = 13;
+    private int margin   = 2;
 
-    public int ticks = 100;
+    private int ticks = 100;
 
     private boolean running = false;
     private World world;
@@ -38,10 +41,17 @@ public class Game extends Canvas implements Runnable {
         setPreferredSize(size);
         this.world = new World(windowX, windowY, cellSize, margin);
         this.frame = new JFrame();
+
+        this.frame.setResizable(false);
+        this.frame.setTitle("Cave Creator");
+        this.frame.add(this);
+        this.frame.pack();
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setLocationRelativeTo(null);
+        this.frame.setVisible(true);
     }
 
     public synchronized void start() {
-        // Constuct initial world grid
         this.world.build();
 
         this.running = true;
@@ -72,7 +82,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void update() {
-        
+        this.world.update();
     }
 
     public void render() {
@@ -83,28 +93,13 @@ public class Game extends Canvas implements Runnable {
         }
 
         Graphics g = (Graphics2D) bs.getDrawGraphics();
-        // Clear screen
+        
         g.setColor(new Color(0x2c3e50));
         g.fillRect(0, 0, getWidth(), getHeight());
-        // Render next world frame
+        
         this.world.render(g);
 
         g.dispose();
         bs.show();
-    }
-
-
-    public static void main(String[] args) {
-        Game game = new Game();
-
-        game.frame.setResizable(false);
-        game.frame.setTitle("Cave Creator");
-        game.frame.add(game);
-        game.frame.pack();
-        game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        game.frame.setLocationRelativeTo(null);
-        game.frame.setVisible(true);
-
-        game.start();
     }
 }

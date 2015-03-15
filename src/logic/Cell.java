@@ -1,66 +1,44 @@
 
 /**
- * Cell class
+ * CELL CLASS
+ * Responsible for keeping track of cell position and state.
  */
 
 package logic;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 
 public class Cell {
-    private int posX;
-    private int posY;
-    private boolean active;
-    private ArrayList<Cell> adjacent;
+    private int screenX;
+    private int screenY;
+    private int gridX;
+    private int gridY;
 
-    public Cell(int x, int y) {
-        this.posX = x;
-        this.posY = y;
-        this.adjacent = new ArrayList<Cell>();
-        
-        Random random = new Random();
-        int fate = random.nextInt(100);
-        if (fate > 95) {
-            this.active = true;
+    public Cell(int screenX, int screenY, int gridX, int gridY) {
+        this.screenX = screenX;
+        this.screenY = screenY;
+        this.gridX = gridX;
+        this.gridY = gridY;
+    }
+
+    public boolean isActive(int[][] grid) {
+        if (grid[this.gridX][this.gridY] == 1) {
+            return true;
         } else {
-            this.active = false;
+            return false;
         }
-    }
-
-    public ArrayList<Cell> findAdjacent(int incrementer) {
-        ArrayList<Cell> adjacent = new ArrayList<Cell>();
-        for (Cell cell : grid) {
-            int x = cell.getX();
-            int y = cell.getY();
-            
-        }
-    }
-
-    public int checkAdjacent() {
-        int activeTotal = 0;
-        for (Cell cell : this.adjacent) {
-            if (cell.isActive()) {
-                activeTotal++;
-            }
-        }
-        return activeTotal;
-    }
-
-    public boolean isActive() {
-        return this.active;
     }
 
     public int getX() {
-        return this.posX;
+        return this.screenX;
     }
 
     public int getY() {
-        return this.posY;
+        return this.screenY;
     }
 
     public String toString() {
-        return "Cell at [" + posX + ", " + posY + "]";
+        return "Cell at [" + screenX + ", " + screenY + "] (" + gridX + ", " + gridY + "]";
     }
 }
