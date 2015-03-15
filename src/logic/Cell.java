@@ -6,20 +6,20 @@
 
 package logic;
 
-import java.util.Random;
-
 
 public class Cell {
     private int screenX;
     private int screenY;
     private int gridX;
     private int gridY;
+    public int growthValue;
 
     public Cell(int screenX, int screenY, int gridX, int gridY) {
         this.screenX = screenX;
         this.screenY = screenY;
         this.gridX = gridX;
         this.gridY = gridY;
+        this.growthValue = 0;
     }
 
     public boolean isActive(int[][] grid) {
@@ -47,6 +47,6 @@ public class Cell {
     }
 
     public String toString() {
-        return "Cell at [" + screenX + ", " + screenY + "] (" + gridX + ", " + gridY + ")";
+        return "Cell at [" + gridX + ", " + gridY + "]";
     }
 }

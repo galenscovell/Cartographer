@@ -55,7 +55,7 @@ public class Game extends Canvas implements Runnable {
         this.world.build();
 
         this.running = true;
-        Thread thread = new Thread(this);
+        Thread thread = new Thread(this, "Display");
         thread.start(); // call run()
     }
 
