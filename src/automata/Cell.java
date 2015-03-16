@@ -4,7 +4,7 @@
  * Responsible for keeping track of cell position and state.
  */
 
-package logic;
+package automata;
 
 
 public class Cell {
@@ -24,14 +24,6 @@ public class Cell {
 
     public boolean isActive(int[][] grid) {
         if (grid[this.gridX][this.gridY] == 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean isWall(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 2) {
             return true;
         } else {
             return false;

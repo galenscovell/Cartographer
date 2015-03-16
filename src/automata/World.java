@@ -4,9 +4,9 @@
  * Responsible for rendering and updating world grid.
  */
 
-package graphics;
+package automata;
 
-import logic.Cell;
+import automata.Cell;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -49,15 +49,12 @@ public class World {
                 screenY = (y * (this.cellSize + this.margin)) + this.margin;
                 this.cells.add(new Cell(screenX, screenY, x, y));
 
-                if (x == 0 || y == 0 || x == this.columns - 1 || y == this.rows - 1) {
-                    this.grid[x][y] = 2;
+                
+                chance = random.nextInt(100);
+                if (chance < 45) {
+                    this.grid[x][y] = 1;
                 } else {
-                    chance = random.nextInt(100);
-                    if (chance < 45) {
-                        this.grid[x][y] = 1;
-                    } else {
-                        this.grid[x][y] = 0;
-                    }
+                    this.grid[x][y] = 0;
                 }
             }
         }
@@ -97,25 +94,21 @@ public class World {
     }
 
     public void smooth(int growthValue, Cell cell) {
-        if (growthValue >= 1 && growthValue <= 5) {
-            grid[cell.getGridX()][cell.getGridY()] = 1;
+        if (cell.isActive(this.grid)) {
+            if (growthValue < 1 || growthValue > 4) {
+                grid[cell.getGridX()][cell.getGridY()] = 0;
+            }
         } else if (growthValue == 3) {
-            grid[cell.getGridX()][cell.getGridY()] = 1;
-        } else {
-            grid[cell.getGridX()][cell.getGridY()] = 0;
+                grid[cell.getGridX()][cell.getGridY()] = 1;
         }
     }
 
     public void update() {
         for (Cell cell : this.cells) {
-            if (!cell.isWall(this.grid)){
-                cell.growthValue = checkAdjacent(cell);
-            }
+            cell.growthValue = checkAdjacent(cell);
         }
         for (Cell cell : this.cells) {
-            if (!cell.isWall(this.grid)){
-                smooth(cell.growthValue, cell);;
-            }
+            smooth(cell.growthValue, cell);;
         }
     }
 
@@ -123,8 +116,6 @@ public class World {
         for (Cell cell : this.cells) {
             if (cell.isActive(this.grid)) {
                 g.setColor(new Color(0x34495e));
-            } else if (cell.isWall(this.grid)) {
-                g.setColor(new Color(0x2980b9));
             } else {
                 g.setColor(new Color(0x27ae60));
             }

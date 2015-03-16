@@ -6,7 +6,7 @@
 
 package logic;
 
-import graphics.World;
+import automata.World;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -25,11 +25,11 @@ public class Game extends Canvas implements Runnable {
     private int cellSize = 13;
     private int margin   = 2;
 
-    private int ticks = 5;
+    private int ticks = 20;
 
     private boolean running = false;
     private World world;
-    private JFrame frame;
+    private JFrame mainFrame;
 
     final int FPS = 20;
     final int SKIP_TICKS = 1000 / FPS;
@@ -37,18 +37,19 @@ public class Game extends Canvas implements Runnable {
 
 
     public Game() {
+        this.world = new World(windowX, windowY, cellSize, margin);
+
         Dimension size = new Dimension(windowX, windowY);
         setPreferredSize(size);
-        this.world = new World(windowX, windowY, cellSize, margin);
-        this.frame = new JFrame();
+        this.mainFrame = new JFrame();
 
-        this.frame.setResizable(false);
-        this.frame.setTitle("Cave Creator");
-        this.frame.add(this);
-        this.frame.pack();
-        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.frame.setLocationRelativeTo(null);
-        this.frame.setVisible(true);
+        this.mainFrame.setResizable(false);
+        this.mainFrame.setTitle("Cave Creator");
+        this.mainFrame.add(this);
+        this.mainFrame.pack();
+        this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.mainFrame.setLocationRelativeTo(null);
+        this.mainFrame.setVisible(true);
     }
 
     public synchronized void start() {
