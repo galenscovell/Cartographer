@@ -1,7 +1,7 @@
 
 /**
  * GAME CLASS
- * Responsible for handling of game loop.
+ * Handles game loop.
  */
 
 package logic;
@@ -25,6 +25,7 @@ public class Game extends Canvas implements Runnable {
     private int cellSize = 13;
     private int margin   = 2;
 
+    private int worldSmoothing = 30;
     private int ticks = 20;
 
     private boolean running = false;
@@ -68,7 +69,20 @@ public class Game extends Canvas implements Runnable {
         double nextTick = System.currentTimeMillis();
         int loops;
 
-        // Main loop
+        // World building loop
+        while (this.running && this.worldSmoothing > 0) {
+            loops = 0;
+            while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
+                this.world.update();
+                render();
+
+                nextTick += SKIP_TICKS;
+                loops++;
+                this.worldSmoothing--;
+            }
+        }
+
+        // Explorer loop
         while (this.running && this.ticks > 0) {
             loops = 0;
             while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
@@ -83,7 +97,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void update() {
-        this.world.update();
+        
     }
 
     public void render() {
