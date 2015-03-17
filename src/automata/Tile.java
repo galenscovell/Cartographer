@@ -10,7 +10,7 @@ package automata;
 public class Tile {
     private int gridX;
     private int gridY;
-    public int floorNeighbors;
+    private int floorNeighbors;
 
     public Tile(int x, int y) {
         this.gridX = x;
@@ -40,6 +40,14 @@ public class Tile {
         } else {
             return false;
         }
+    }
+
+    public void updateNeighbors(int value) {
+        this.floorNeighbors = value;
+    }
+
+    public int getNeighbors() {
+        return this.floorNeighbors;
     }
 
     public int getX() {

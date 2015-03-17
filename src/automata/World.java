@@ -2,30 +2,32 @@
 /**
  * WORLD CLASS
  * Renders and updates world grid.
+ * World is composed of an int[][] grid and a list of matching Tile instances
  */
 
 package automata;
 
-import automata.Tile;
+import logic.Builder;
+import logic.CaveBuilder;
+import logic.MazeBuilder;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 public class World {
-    public static int columns;
-    public static int rows;
+    private int columns;
+    private int rows;
 
     private int tileSize;
     private int margin;
 
-    public static int[][] grid;
+    private Builder builder;
+    public int[][] grid;
     private ArrayList<Tile> tiles;
+
     private Explorer explorer;
     
 
@@ -33,36 +35,20 @@ public class World {
         this.tileSize = tileSize;
         this.margin = margin;
 
-        World.columns = width / (tileSize + margin);
-        World.rows = height / (tileSize + margin);
+        this.columns = width / (tileSize + margin);
+        this.rows = height / (tileSize + margin);
 
-        World.grid = new int[World.columns][World.rows];
-        this.tiles = new ArrayList<Tile>();
-    }
+        this.builder = new CaveBuilder(this.columns, this.rows);
+        this.builder.build();
 
-    public void build() {
-        Random random = new Random();
-        int chance;
-
-        int screenX, screenY;
-        for (int y = 0; y < World.rows; y++) {
-            for (int x = 0; x < World.columns; x++) {
-                this.tiles.add(new Tile(x, y));
-
-                chance = random.nextInt(100);
-                if (chance < 40) {
-                    World.grid[x][y] = 1;
-                } else {
-                    World.grid[x][y] = 0;
-                }
-            }
-        }
+        this.grid = this.builder.getGrid();
+        this.tiles = this.builder.getTiles();
     }
 
     public Explorer placeExplorer() {
         for (Tile tile : this.tiles) {
-            if (tile.isFloor(World.grid)) {
-                World.grid[tile.getX()][tile.getY()] = 2;
+            if (tile.isFloor(this.grid)) {
+                this.grid[tile.getX()][tile.getY()] = 2;
                 Explorer explorer = new Explorer(tile.getX(), tile.getY());
                 return explorer;
             } else {
@@ -86,7 +72,7 @@ public class World {
                 if (isOutOfBounds(sumX, sumY)) {
                     continue;
                 }
-                if (World.grid[sumX][sumY] == 1) {
+                if (this.grid[sumX][sumY] == 1) {
                     floorNeighbors++;
                 }
             }
@@ -95,59 +81,50 @@ public class World {
     }
 
     
-    public static boolean isOutOfBounds(int x, int y) {
+    public boolean isOutOfBounds(int x, int y) {
         if (x < 0 || y < 0){
             return true;
-        } else if (x >= World.columns || y >= World.rows){
+        } else if (x >= this.columns || y >= this.rows){
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isEmptyFloorSpace() {
+    public boolean isFloorSpace() {
         for (Tile tile : this.tiles) {
-            if (tile.isFloor(World.grid)) {
+            if (tile.isFloor(this.grid)) {
                 return true;
             }
         }
         return false;
     }
 
-    public void smooth(int floorNeighbors, Tile tile) {
-        if (tile.isFloor(World.grid)) {
-            if (floorNeighbors == 0 || floorNeighbors > 4) {
-                grid[tile.getX()][tile.getY()] = 0;
-            }
-        } else if (tile.isWall(World.grid)) {
-            if (floorNeighbors == 3) {
-                grid[tile.getX()][tile.getY()] = 1;
-            }
-        }
-    }
-
     public void update() {
         for (Tile tile : this.tiles) {
-            tile.floorNeighbors = checkAdjacent(tile);
+            tile.updateNeighbors(checkAdjacent(tile));
         }
         for (Tile tile : this.tiles) {
-            smooth(tile.floorNeighbors, tile);
+            this.builder.smooth(tile);
         }
     }
 
     public void render(Graphics g) {
         int screenX, screenY;
-        Color floor = new Color(0x34495e);
-        Color wall = new Color(0x2c3e50);
-        Color explored = new Color(0x3498db);
+        Color floor    = new Color(0x34495e);
+        Color wall     = new Color(0x2c3e50);
+        Color explored = new Color(0x2980b9);
+        Color active   = new Color(0xecf0f1);
 
         for (Tile tile : this.tiles) {
-            if (tile.isFloor(World.grid)) {
+            if (tile.isFloor(this.grid)) {
                 g.setColor(floor);
-            } else if (tile.isWall(World.grid)) {
+            } else if (tile.isWall(this.grid)) {
                 g.setColor(wall);
-            } else if (tile.isExplored(World.grid)) {
+            } else if (tile.isExplored(this.grid)) {
                 g.setColor(explored);
+            } else {
+                g.setColor(active);
             }
             screenX = (tile.getX() * (this.tileSize + this.margin)) + this.margin;
             screenY = (tile.getY() * (this.tileSize + this.margin)) + this.margin;

@@ -6,6 +6,8 @@
 
 package automata;
 
+import logic.Point;
+
 
 public class Miner {
     private int gridX;

@@ -22,7 +22,7 @@ public class Explorer {
         this.gridY = y;
     }
 
-    public boolean movement() {
+    public boolean movement(World world) {
         ArrayList<Point> options = new ArrayList<Point>();
         int sumX, sumY;
 
@@ -30,10 +30,10 @@ public class Explorer {
             sumX = this.getX() + x;
             sumY = this.getY();
 
-            if (World.isOutOfBounds(sumX, sumY)) {
+            if (world.isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (World.grid[sumX][sumY] == 1) {
+            if (world.grid[sumX][sumY] == 1) {
                 options.add(new Point(sumX, sumY));
             }
         }
@@ -42,19 +42,20 @@ public class Explorer {
             sumX = this.getX();
             sumY = this.getY() + y;
 
-            if (World.isOutOfBounds(sumX, sumY)) {
+            if (world.isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (World.grid[sumX][sumY] == 1) {
+            if (world.grid[sumX][sumY] == 1) {
                 options.add(new Point(sumX, sumY));
             }
         }
 
+        world.grid[this.gridX][this.gridY] = 2;
         if (options.size() > 0) {
             Random random = new Random();
             int choice = random.nextInt(options.size());
             Point chosenPoint = options.get(choice);
-            moveToTile(chosenPoint.pointX(), chosenPoint.pointY(), World.grid);
+            moveToTile(chosenPoint.pointX(), chosenPoint.pointY(), world.grid);
             return true;
         } else {
             return false;
@@ -62,9 +63,9 @@ public class Explorer {
     }
 
     public void moveToTile(int newX, int newY, int[][] grid) {
-        grid[newX][newY] = 2;
         this.gridX = newX;
         this.gridY = newY;
+        grid[this.gridX][this.gridY] = 3;
     }
 
     public int getX() {

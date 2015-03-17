@@ -13,7 +13,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 import java.awt.image.BufferStrategy;
 
@@ -21,22 +20,20 @@ import javax.swing.JFrame;
 
 
 public class Game extends Canvas implements Runnable {
-    private int windowX  = 722;
-    private int windowY  = 482;
-    private int cellSize = 13;
-    private int margin   = 2;
+    private int windowX  = 721;
+    private int windowY  = 481;
+    private int cellSize = 9;
+    private int margin   = 1;
 
-    private int smoothingTicks = 20;
-    private int exploringTicks = 800;
+    private int smoothingTicks = 2;
+    private int exploringTicks = 2000;
 
     private boolean running = false;
     private World world;
     private Explorer explorer;
     private JFrame mainFrame;
 
-    final int FPS = 20;
-    final int SKIP_TICKS = 1000 / FPS;
-    final int MAX_FRAMESKIP = 5;
+    final int FPS = 30;
 
 
     public Game() {
@@ -47,7 +44,7 @@ public class Game extends Canvas implements Runnable {
         this.mainFrame = new JFrame();
 
         this.mainFrame.setResizable(false);
-        this.mainFrame.setTitle("Cave Creator");
+        this.mainFrame.setTitle("Maze Creator");
         this.mainFrame.add(this);
         this.mainFrame.pack();
         this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,9 +53,6 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
-        this.world.build();
-        this.explorer = this.world.placeExplorer();
-
         this.running = true;
         Thread thread = new Thread(this, "Display");
         thread.start(); // call run()
@@ -69,33 +63,51 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void run() {
-        double nextTick = System.currentTimeMillis();
-        int loops;
+        long start, end, sleepTime;
 
         // World building loop
         while (this.running && this.smoothingTicks > 0) {
-            loops = 0;
-            while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
-                this.world.update();
-                render();
-                nextTick += SKIP_TICKS;
-                loops++;
-                this.smoothingTicks--;
+            start = System.currentTimeMillis();
+            this.world.update();
+            render();
+            this.smoothingTicks--;
+            end = System.currentTimeMillis();
+            // Sleep to match FPS limit
+            sleepTime = (1000 / FPS) - (end - start);
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
+        this.explorer = this.world.placeExplorer();
+
         // Explorer loop
         while (this.running && this.exploringTicks > 0) {
-            loops = 0;
-            while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
-                if (this.explorer.movement()) {
-                    render();
-                    nextTick += SKIP_TICKS;
-                    loops++;
-                    this.exploringTicks--;
-                } else if (this.world.isEmptyFloorSpace()) {
-                    this.explorer = this.world.placeExplorer();
+            if (this.explorer.movement(this.world)) {
+                // Current explorer moves if able
+                start = System.currentTimeMillis();
+                render();
+                this.exploringTicks--;
+                end = System.currentTimeMillis();
+                // Sleep to match FPS limit
+                sleepTime = (1000 / FPS) - (end - start);
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime); 
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } else if (this.world.isFloorSpace()) {
+                // Place new explorer if empty space remains
+                this.explorer = this.world.placeExplorer();
+            } else {
+                // Stop exploration runtime
+                this.exploringTicks = 0;
             }
         }
     }
@@ -107,11 +119,11 @@ public class Game extends Canvas implements Runnable {
             return;
         }
 
-        Graphics g = (Graphics2D) bs.getDrawGraphics();
-        
+        Graphics g = bs.getDrawGraphics();
+        // Clear screen
         g.setColor(new Color(0x2c3e50));
         g.fillRect(0, 0, getWidth(), getHeight());
-        
+        // Render next frame
         this.world.render(g);
 
         g.dispose();
