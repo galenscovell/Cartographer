@@ -34,6 +34,14 @@ public class Tile {
         }
     }
 
+    public boolean isExplored(int[][] grid) {
+        if (grid[this.gridX][this.gridY] == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public int getX() {
         return this.gridX;
     }

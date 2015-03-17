@@ -12,29 +12,31 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
+import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 
 public class World {
-    private int columns;
-    private int rows;
+    public static int columns;
+    public static int rows;
+
     private int tileSize;
     private int margin;
 
-    private int[][] grid;
-    private List<Tile> tiles;
+    public static int[][] grid;
+    private ArrayList<Tile> tiles;
+    private Explorer explorer;
     
 
     public World(int width, int height, int tileSize, int margin) {
         this.tileSize = tileSize;
         this.margin = margin;
 
-        this.columns = width / (tileSize + margin);
-        this.rows = height / (tileSize + margin);
+        World.columns = width / (tileSize + margin);
+        World.rows = height / (tileSize + margin);
 
-        this.grid = new int[this.columns][this.rows];
+        World.grid = new int[World.columns][World.rows];
         this.tiles = new ArrayList<Tile>();
     }
 
@@ -43,18 +45,31 @@ public class World {
         int chance;
 
         int screenX, screenY;
-        for (int y = 0; y < this.rows; y++) {
-            for (int x = 0; x < this.columns; x++) {
+        for (int y = 0; y < World.rows; y++) {
+            for (int x = 0; x < World.columns; x++) {
                 this.tiles.add(new Tile(x, y));
 
                 chance = random.nextInt(100);
                 if (chance < 40) {
-                    this.grid[x][y] = 1;
+                    World.grid[x][y] = 1;
                 } else {
-                    this.grid[x][y] = 0;
+                    World.grid[x][y] = 0;
                 }
             }
         }
+    }
+
+    public Explorer placeExplorer() {
+        for (Tile tile : this.tiles) {
+            if (tile.isFloor(World.grid)) {
+                World.grid[tile.getX()][tile.getY()] = 2;
+                Explorer explorer = new Explorer(tile.getX(), tile.getY());
+                return explorer;
+            } else {
+                continue;
+            }
+        }
+        return null;
     }
 
     public int checkAdjacent(Tile tile) {
@@ -71,8 +86,8 @@ public class World {
                 if (isOutOfBounds(sumX, sumY)) {
                     continue;
                 }
-                if (this.grid[sumX][sumY] == 1) {
-                        floorNeighbors++;
+                if (World.grid[sumX][sumY] == 1) {
+                    floorNeighbors++;
                 }
             }
         }
@@ -80,24 +95,33 @@ public class World {
     }
 
     
-    public boolean isOutOfBounds(int x, int y) {
+    public static boolean isOutOfBounds(int x, int y) {
         if (x < 0 || y < 0){
             return true;
-        } else if (x >= this.columns || y >= this.rows){
+        } else if (x >= World.columns || y >= World.rows){
             return true;
         } else {
             return false;
         }
     }
 
-    public void smooth(int floorNeighbors, Tile tile) {
-        if (tile.isFloor(this.grid)) {
-            if (floorNeighbors == 0 || floorNeighbors > 4) {
-                grid[tile.getX()][tile.getY()] = 0; // tile becomes wall
+    public boolean isEmptyFloorSpace() {
+        for (Tile tile : this.tiles) {
+            if (tile.isFloor(World.grid)) {
+                return true;
             }
-        } else if (tile.isWall(this.grid)) {
+        }
+        return false;
+    }
+
+    public void smooth(int floorNeighbors, Tile tile) {
+        if (tile.isFloor(World.grid)) {
+            if (floorNeighbors == 0 || floorNeighbors > 4) {
+                grid[tile.getX()][tile.getY()] = 0;
+            }
+        } else if (tile.isWall(World.grid)) {
             if (floorNeighbors == 3) {
-                grid[tile.getX()][tile.getY()] = 1; // tile becomes floor
+                grid[tile.getX()][tile.getY()] = 1;
             }
         }
     }
@@ -113,12 +137,17 @@ public class World {
 
     public void render(Graphics g) {
         int screenX, screenY;
+        Color floor = new Color(0x34495e);
+        Color wall = new Color(0x2c3e50);
+        Color explored = new Color(0x3498db);
 
         for (Tile tile : this.tiles) {
-            if (tile.isFloor(this.grid)) {
-                g.setColor(new Color(0x34495e));
-            } else {
-                g.setColor(new Color(0x27ae60));
+            if (tile.isFloor(World.grid)) {
+                g.setColor(floor);
+            } else if (tile.isWall(World.grid)) {
+                g.setColor(wall);
+            } else if (tile.isExplored(World.grid)) {
+                g.setColor(explored);
             }
             screenX = (tile.getX() * (this.tileSize + this.margin)) + this.margin;
             screenY = (tile.getY() * (this.tileSize + this.margin)) + this.margin;

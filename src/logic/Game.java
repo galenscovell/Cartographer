@@ -6,6 +6,7 @@
 
 package logic;
 
+import automata.Explorer;
 import automata.World;
 
 import java.awt.Canvas;
@@ -25,11 +26,12 @@ public class Game extends Canvas implements Runnable {
     private int cellSize = 13;
     private int margin   = 2;
 
-    private int worldSmoothing = 30;
-    private int ticks = 20;
+    private int smoothingTicks = 20;
+    private int exploringTicks = 800;
 
     private boolean running = false;
     private World world;
+    private Explorer explorer;
     private JFrame mainFrame;
 
     final int FPS = 20;
@@ -55,6 +57,7 @@ public class Game extends Canvas implements Runnable {
 
     public synchronized void start() {
         this.world.build();
+        this.explorer = this.world.placeExplorer();
 
         this.running = true;
         Thread thread = new Thread(this, "Display");
@@ -70,34 +73,31 @@ public class Game extends Canvas implements Runnable {
         int loops;
 
         // World building loop
-        while (this.running && this.worldSmoothing > 0) {
+        while (this.running && this.smoothingTicks > 0) {
             loops = 0;
             while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
                 this.world.update();
                 render();
-
                 nextTick += SKIP_TICKS;
                 loops++;
-                this.worldSmoothing--;
+                this.smoothingTicks--;
             }
         }
 
         // Explorer loop
-        while (this.running && this.ticks > 0) {
+        while (this.running && this.exploringTicks > 0) {
             loops = 0;
             while (System.currentTimeMillis() > nextTick && loops < MAX_FRAMESKIP) {
-                update();
-                render();
-
-                nextTick += SKIP_TICKS;
-                loops++;
-                this.ticks--;
+                if (this.explorer.movement()) {
+                    render();
+                    nextTick += SKIP_TICKS;
+                    loops++;
+                    this.exploringTicks--;
+                } else if (this.world.isEmptyFloorSpace()) {
+                    this.explorer = this.world.placeExplorer();
+                }
             }
         }
-    }
-
-    public void update() {
-        
     }
 
     public void render() {
