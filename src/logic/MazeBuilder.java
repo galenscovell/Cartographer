@@ -1,7 +1,8 @@
 
 /**
  * MAZEBUILDER CLASS
- * Constructs a new world grid and tileset with maze features.
+ * Constructs a new world grid and tileset with maze features. 
+ * (winding paths one tile thick)
  */
 
 package logic;

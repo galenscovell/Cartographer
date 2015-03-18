@@ -2,6 +2,7 @@
 /**
  * EXPLORER CLASS
  * Traverses maze, determining paths.
+ * Explorer makes only NESW movements and is replaced once unable to move.
  */
 
 package automata;

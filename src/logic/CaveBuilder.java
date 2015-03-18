@@ -1,7 +1,8 @@
 
 /**
  * CAVEBUILDER CLASS
- * Constructs a new world grid and tileset with cave features.
+ * Constructs a new world grid and tileset with cave features. 
+ * (large, open areas)
  */
 
 package logic;

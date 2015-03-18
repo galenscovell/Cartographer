@@ -2,12 +2,19 @@
 /**
  * GAME CLASS
  * Handles game loop.
+ *
+ * Creates JFrame and World
+ * Begins Thread and sets up BufferStrategy
+ * Loops specified times through world-building process
+ * Loops specified times through exploration process
+ * Limits FPS
  */
 
 package logic;
 
 import automata.Explorer;
 import automata.World;
+import ui.MenuScreen;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -17,21 +24,23 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class Game extends Canvas implements Runnable {
-    private int windowX  = 721;
-    private int windowY  = 481;
-    private int cellSize = 9;
-    private int margin   = 1;
+    private int windowX  = 720;
+    private int windowY  = 480;
+    private int cellSize = 8;
+    private int margin   = 2;
 
-    private int smoothingTicks = 2;
+    private int smoothingTicks = 20;
     private int exploringTicks = 2000;
 
     private boolean running = false;
     private World world;
     private Explorer explorer;
     private JFrame mainFrame;
+    private JPanel menuFrame;
 
     final int FPS = 30;
 
@@ -42,6 +51,7 @@ public class Game extends Canvas implements Runnable {
         Dimension size = new Dimension(windowX, windowY);
         setPreferredSize(size);
         this.mainFrame = new JFrame();
+        this.menuFrame = new MenuScreen(windowX, windowY);
 
         this.mainFrame.setResizable(false);
         this.mainFrame.setTitle("Maze Creator");
@@ -119,14 +129,14 @@ public class Game extends Canvas implements Runnable {
             return;
         }
 
-        Graphics g = bs.getDrawGraphics();
+        Graphics gfx = bs.getDrawGraphics();
         // Clear screen
-        g.setColor(new Color(0x2c3e50));
-        g.fillRect(0, 0, getWidth(), getHeight());
+        gfx.setColor(new Color(0x2c3e50));
+        gfx.fillRect(0, 0, getWidth(), getHeight());
         // Render next frame
-        this.world.render(g);
+        this.world.render(gfx);
 
-        g.dispose();
+        gfx.dispose();
         bs.show();
     }
 }

@@ -1,7 +1,7 @@
 
 /**
  * BUILDER INTERFACE
- * All world builders utilize build(), smooth(), getGrid() and getTiles()
+ * All builders utilize build(), smooth(), getGrid() and getTiles()
  */
 
 package logic;

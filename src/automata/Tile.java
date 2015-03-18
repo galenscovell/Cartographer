@@ -2,6 +2,7 @@
 /**
  * TILE CLASS
  * Keeps track of tile position and state.
+ * State can be one of Wall(0), Floor(1) or Explored(2)
  */
 
 package automata;
@@ -18,16 +19,16 @@ public class Tile {
         this.floorNeighbors = 0;
     }
 
-    public boolean isFloor(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 1) {
+    public boolean isWall(int[][] grid) {
+        if (grid[this.gridX][this.gridY] == 0) {
             return true;
         } else {
             return false;
         }
     }
 
-    public boolean isWall(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 0) {
+    public boolean isFloor(int[][] grid) {
+        if (grid[this.gridX][this.gridY] == 1) {
             return true;
         } else {
             return false;

@@ -2,6 +2,7 @@
 /**
  * POINT CLASS
  * Stores [x, y] coordinates from grid.
+ * Used as List item for easily storing grid coordinates across objects.
  */
 
 package logic;

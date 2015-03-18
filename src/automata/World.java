@@ -2,7 +2,7 @@
 /**
  * WORLD CLASS
  * Renders and updates world grid.
- * World is composed of an int[][] grid and a list of matching Tile instances
+ * World is composed of a 2D array grid and a list of matching Tile instances.
  */
 
 package automata;
@@ -38,7 +38,7 @@ public class World {
         this.columns = width / (tileSize + margin);
         this.rows = height / (tileSize + margin);
 
-        this.builder = new CaveBuilder(this.columns, this.rows);
+        this.builder = new MazeBuilder(this.columns, this.rows);
         this.builder.build();
 
         this.grid = this.builder.getGrid();
@@ -109,7 +109,7 @@ public class World {
         }
     }
 
-    public void render(Graphics g) {
+    public void render(Graphics gfx) {
         int screenX, screenY;
         Color floor    = new Color(0x34495e);
         Color wall     = new Color(0x2c3e50);
@@ -118,17 +118,17 @@ public class World {
 
         for (Tile tile : this.tiles) {
             if (tile.isFloor(this.grid)) {
-                g.setColor(floor);
+                gfx.setColor(floor);
             } else if (tile.isWall(this.grid)) {
-                g.setColor(wall);
+                gfx.setColor(wall);
             } else if (tile.isExplored(this.grid)) {
-                g.setColor(explored);
+                gfx.setColor(explored);
             } else {
-                g.setColor(active);
+                gfx.setColor(active);
             }
-            screenX = (tile.getX() * (this.tileSize + this.margin)) + this.margin;
-            screenY = (tile.getY() * (this.tileSize + this.margin)) + this.margin;
-            g.fillRect(screenX, screenY, this.tileSize, this.tileSize);
+            screenX = (tile.getX() * (this.tileSize + this.margin)) + 1;
+            screenY = (tile.getY() * (this.tileSize + this.margin)) + 1;
+            gfx.fillRect(screenX, screenY, this.tileSize, this.tileSize);
         }
     }
 }
