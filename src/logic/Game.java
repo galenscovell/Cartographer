@@ -14,7 +14,7 @@ package logic;
 
 import automata.Explorer;
 import automata.World;
-import ui.MenuScreen;
+import ui.Screen;
 
 import java.awt.Canvas;
 import java.awt.Color;
@@ -38,7 +38,7 @@ public class Game extends Canvas implements Runnable {
 
     private World world;
     private Explorer explorer;
-    private JFrame mainFrame;
+    private JFrame frame;
     private Thread thread;
 
     final int FPS = 30;
@@ -49,19 +49,19 @@ public class Game extends Canvas implements Runnable {
 
         Dimension size = new Dimension(windowX, windowY);
         setPreferredSize(size);
-        this.mainFrame = new JFrame();
-        MenuScreen menuFrame = new MenuScreen(windowX, windowY);
+        this.frame = new JFrame();
+        Screen screen = new Screen(windowX, windowY);
 
-        this.mainFrame.getContentPane().setBackground(new Color(0x2c3e50));
-        this.mainFrame.setResizable(false);
-        this.mainFrame.setTitle("Maze Creator");
-        this.mainFrame.setLayout(new FlowLayout());
-        this.mainFrame.add(this);
-        this.mainFrame.add(menuFrame);
-        this.mainFrame.pack();
-        this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.mainFrame.setLocationRelativeTo(null);
-        this.mainFrame.setVisible(true);
+        this.frame.getContentPane().setBackground(new Color(0x2c3e50));
+        this.frame.setResizable(false);
+        this.frame.setTitle("Maze Creator");
+        this.frame.setLayout(new FlowLayout());
+        this.frame.add(this);
+        this.frame.add(screen);
+        this.frame.pack();
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setLocationRelativeTo(null);
+        this.frame.setVisible(true);
     }
 
     public synchronized void start() {
