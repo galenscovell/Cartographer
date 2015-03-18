@@ -40,6 +40,7 @@ public class Screen extends JPanel {
         JButton startButton  = new JButton("Construct");
         JButton pauseButton  = new JButton("Pause");
         JButton resetButton  = new JButton("Reset");
+        JButton quitButton   = new JButton("Quit");
 
 
         // Set specific component settings
@@ -69,19 +70,22 @@ public class Screen extends JPanel {
 
         resetButton.setFocusPainted(false);
 
+        quitButton.setFocusPainted(false);
+
 
         // Set component dimensions
         Dimension labelSize = new Dimension(120, 20);
-        Dimension fittedSize = new Dimension(120, 50);
+        Dimension buttonSize = new Dimension(110, 35);
         mainPanel.setPreferredSize(new Dimension(this.width, this.height));
-        subPanel.setPreferredSize(new Dimension(160, 400));
+        subPanel.setPreferredSize(new Dimension(160, 440));
         startLabel.setPreferredSize(labelSize);
         settingsPanel.setPreferredSize(new Dimension(140, 140));
         slideLabel.setPreferredSize(labelSize);
-        frameSlide.setPreferredSize(fittedSize);
-        startButton.setPreferredSize(fittedSize);
-        pauseButton.setPreferredSize(fittedSize);
-        resetButton.setPreferredSize(fittedSize);
+        frameSlide.setPreferredSize(new Dimension(120, 50));
+        startButton.setPreferredSize(buttonSize);
+        pauseButton.setPreferredSize(buttonSize);
+        resetButton.setPreferredSize(buttonSize);
+        quitButton.setPreferredSize(buttonSize);
         
 
         // Set component fonts
@@ -95,6 +99,7 @@ public class Screen extends JPanel {
         startButton.setFont(smallFont);
         pauseButton.setFont(smallFont);
         resetButton.setFont(smallFont);
+        quitButton.setFont(smallFont);
 
         
         // Compose components
@@ -108,6 +113,7 @@ public class Screen extends JPanel {
         subPanel.add(startButton);
         subPanel.add(pauseButton);
         subPanel.add(resetButton);
+        subPanel.add(quitButton);
 
         mainPanel.add(subPanel);
 
