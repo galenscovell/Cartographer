@@ -21,6 +21,8 @@ import java.awt.Graphics;
 
 import java.awt.image.BufferStrategy;
 
+@SuppressWarnings ("serial")
+
 
 public class Game extends Canvas implements Runnable {
     private int smoothingTicks = 2;
@@ -28,7 +30,8 @@ public class Game extends Canvas implements Runnable {
     private World world;
     private Explorer explorer;
     private Thread thread;
-    private int framerate = 30;
+    private int framerate = 20;
+    private boolean running = false;
 
 
     public Game(int x, int y, int size, int margin) {
@@ -37,19 +40,30 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
-        this.thread = new Thread(this, "Display");
+        this.thread = new Thread(this, "Simulation");
+        this.running = true;
         this.thread.start(); // call run()
     }
 
     public synchronized void stop() {
-        this.thread.interrupt();
+        this.running = false;
+        this.thread = null;
+    }
+
+    public void pause() {
+        if (this.thread == null) {
+            this.world.clearActive();
+            start();
+        } else {
+            stop();
+        }
     }
 
     public void run() {
         long start, end, sleepTime;
 
         // World building loop
-        while (this.smoothingTicks > 0) {
+        while (this.running && this.smoothingTicks > 0) {
             start = System.currentTimeMillis();
             this.world.update();
             render();
@@ -69,7 +83,7 @@ public class Game extends Canvas implements Runnable {
         this.explorer = this.world.placeExplorer();
 
         // Explorer loop
-        while (this.exploringTicks > 0) {
+        while (this.running && this.exploringTicks > 0) {
             if (this.explorer.movement(this.world)) {
                 // Current explorer moves if able
                 start = System.currentTimeMillis();

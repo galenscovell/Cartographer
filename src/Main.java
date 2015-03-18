@@ -12,6 +12,8 @@ import java.awt.FlowLayout;
 
 import javax.swing.JFrame;
 
+@SuppressWarnings ("serial")
+
 
 public class Main {
 
@@ -22,7 +24,7 @@ public class Main {
         int margin   = 2;
 
         Game game     = new Game(windowX, windowY, cellSize, margin);
-        Screen screen = new Screen(windowX, windowY);
+        Screen screen = new Screen(windowX, windowY, game);
         JFrame frame  = new JFrame();
 
         frame.getContentPane().setBackground(new Color(0x2c3e50));

@@ -109,6 +109,14 @@ public class World {
         }
     }
 
+    public void clearActive() {
+        for (Tile tile : this.tiles) {
+            if (this.grid[tile.getX()][tile.getY()] == 3) {
+                this.grid[tile.getX()][tile.getY()] = 2;
+            }
+        }
+    }
+
     public void render(Graphics gfx) {
         int screenX, screenY;
         Color floor    = new Color(0x34495e);
