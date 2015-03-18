@@ -19,12 +19,12 @@ import ui.MenuScreen;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Graphics;
 
 import java.awt.image.BufferStrategy;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 
 public class Game extends Canvas implements Runnable {
@@ -33,14 +33,13 @@ public class Game extends Canvas implements Runnable {
     private int cellSize = 8;
     private int margin   = 2;
 
-    private int smoothingTicks = 20;
+    private int smoothingTicks = 2;
     private int exploringTicks = 2000;
 
-    private boolean running = false;
     private World world;
     private Explorer explorer;
     private JFrame mainFrame;
-    private JPanel menuFrame;
+    private Thread thread;
 
     final int FPS = 30;
 
@@ -51,11 +50,14 @@ public class Game extends Canvas implements Runnable {
         Dimension size = new Dimension(windowX, windowY);
         setPreferredSize(size);
         this.mainFrame = new JFrame();
-        this.menuFrame = new MenuScreen(windowX, windowY);
+        MenuScreen menuFrame = new MenuScreen(windowX, windowY);
 
+        this.mainFrame.getContentPane().setBackground(new Color(0x2c3e50));
         this.mainFrame.setResizable(false);
         this.mainFrame.setTitle("Maze Creator");
+        this.mainFrame.setLayout(new FlowLayout());
         this.mainFrame.add(this);
+        this.mainFrame.add(menuFrame);
         this.mainFrame.pack();
         this.mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.mainFrame.setLocationRelativeTo(null);
@@ -63,20 +65,19 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
-        this.running = true;
-        Thread thread = new Thread(this, "Display");
-        thread.start(); // call run()
+        this.thread = new Thread(this, "Display");
+        this.thread.start(); // call run()
     }
 
-    public synchronized void stop() throws Exception {
-        this.running = false;
+    public synchronized void stop() {
+        this.thread.interrupt();
     }
 
     public void run() {
         long start, end, sleepTime;
 
         // World building loop
-        while (this.running && this.smoothingTicks > 0) {
+        while (this.smoothingTicks > 0) {
             start = System.currentTimeMillis();
             this.world.update();
             render();
@@ -96,7 +97,7 @@ public class Game extends Canvas implements Runnable {
         this.explorer = this.world.placeExplorer();
 
         // Explorer loop
-        while (this.running && this.exploringTicks > 0) {
+        while (this.exploringTicks > 0) {
             if (this.explorer.movement(this.world)) {
                 // Current explorer moves if able
                 start = System.currentTimeMillis();

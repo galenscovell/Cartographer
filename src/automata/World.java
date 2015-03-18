@@ -38,7 +38,7 @@ public class World {
         this.columns = width / (tileSize + margin);
         this.rows = height / (tileSize + margin);
 
-        this.builder = new MazeBuilder(this.columns, this.rows);
+        this.builder = new CaveBuilder(this.columns, this.rows);
         this.builder.build();
 
         this.grid = this.builder.getGrid();
