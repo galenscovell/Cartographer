@@ -56,8 +56,6 @@ public class World {
                 this.grid[tile.getX()][tile.getY()] = 2;
                 Explorer explorer = new Explorer(tile.getX(), tile.getY());
                 return explorer;
-            } else {
-                continue;
             }
         }
         return null;

@@ -60,9 +60,9 @@ public class Screen extends JPanel implements ActionListener {
         this.caveCheck       = new JCheckBox("Cave");
         JLabel frameLabel    = new JLabel("FPS", JLabel.CENTER);
         this.frameSlide      = new JSlider(JSlider.HORIZONTAL, 2, 62, 32);
-        JLabel sizeLabel     = new JLabel("Cell size", JLabel.CENTER);
+        JLabel sizeLabel     = new JLabel("Tile size", JLabel.CENTER);
         this.sizeSlide       = new JSlider(JSlider.HORIZONTAL, 2, 22, 8);
-        JLabel marginLabel   = new JLabel("Cell margin", JLabel.CENTER);
+        JLabel marginLabel   = new JLabel("Tile margin", JLabel.CENTER);
         this.marginSlide     = new JSlider(JSlider.HORIZONTAL, 0, 10, 2);
         JLabel smoothLabel   = new JLabel("Smoothing passes", JLabel.CENTER);
         this.smoothSlide     = new JSlider(JSlider.HORIZONTAL, 2, 22, 6);
@@ -199,7 +199,7 @@ public class Screen extends JPanel implements ActionListener {
     }
 
     public void constructNew(String worldType) {
-        int cellSize = this.sizeSlide.getValue();
+        int tileSize = this.sizeSlide.getValue();
         int margin = this.marginSlide.getValue();
         int framerate = this.frameSlide.getValue();
         int smoothing = this.smoothSlide.getValue();
@@ -208,7 +208,7 @@ public class Screen extends JPanel implements ActionListener {
         this.topFrame.getContentPane().remove(this.game);
         this.topFrame.repaint();
 
-        this.game = new Game(this.width, this.height, cellSize, margin, worldType, smoothing, framerate);
+        this.game = new Game(this.width, this.height, tileSize, margin, worldType, smoothing, framerate);
         this.topFrame.getContentPane().add(this.game);
         this.topFrame.pack();
         this.game.buildWorld();

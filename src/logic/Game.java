@@ -33,10 +33,10 @@ public class Game extends Canvas implements Runnable {
     private Thread thread;
 
 
-    public Game(int x, int y, int size, int margin, String worldType, int smoothing, int framerate) {
+    public Game(int x, int y, int tileSize, int margin, String worldType, int smoothing, int framerate) {
         this.smoothingTicks = smoothing;
         this.framerate = framerate;
-        this.world = new World(x, y, size, margin, worldType);
+        this.world = new World(x, y, tileSize, margin, worldType);
         this.setPreferredSize(new Dimension(x, y));
     }
 
@@ -85,11 +85,10 @@ public class Game extends Canvas implements Runnable {
 
     public void run() {
         long start, end, sleepTime;
-        this.explorer = this.world.placeExplorer();
-
+        
         // Explorer loop
         while (this.running) {
-            if (this.explorer.movement(this.world)) {
+            if (this.explorer != null && this.explorer.movement(this.world)) {
                 // Current explorer moves if able
                 start = System.currentTimeMillis();
                 render();
