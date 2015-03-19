@@ -27,6 +27,7 @@ public class Game extends Canvas implements Runnable {
     private int smoothingTicks;
     private int framerate;
     private boolean running = false;
+    private boolean firstRun = true;
 
     private World world;
     private Explorer explorer;
@@ -84,6 +85,11 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void run() {
+        if (this.firstRun) {
+            this.firstRun = false;
+            pause();
+        }
+
         long start, end, sleepTime;
         
         // Explorer loop
@@ -103,11 +109,18 @@ public class Game extends Canvas implements Runnable {
                         e.printStackTrace();
                     }
                 }
-            } else if (this.world.isFloorSpace()) {
-                // Place new explorer if empty space remains
-                this.explorer = this.world.placeExplorer();
             } else {
-                stop();
+                // Check if world contains empty floor tiles
+                Point floorPoint = this.world.findFloorSpace();
+                if (floorPoint != null) {
+                    // Place new explorer if empty floor tile remains
+                    this.explorer = this.world.placeExplorer(floorPoint);
+                } else {
+                    // Render one last time to finish current frame
+                    render();
+                    // End exploration
+                    stop();
+                }
             }
         }
     }

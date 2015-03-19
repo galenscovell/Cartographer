@@ -39,7 +39,7 @@ public class Screen extends JPanel implements ActionListener {
     private JButton constructButton;
     private JButton pauseButton;
     private JLabel mainLabel;
-    private boolean paused = false;
+    private boolean paused = true;
 
     private JFrame topFrame;
 
@@ -83,44 +83,45 @@ public class Screen extends JPanel implements ActionListener {
 
         mazeCheck.setOpaque(false);
         mazeCheck.setFocusPainted(false);
-        mazeCheck.setEnabled(false);
+        mazeCheck.setEnabled(true);
 
         caveCheck.setOpaque(false);
         caveCheck.setFocusPainted(false);
-        caveCheck.setEnabled(false);
+        caveCheck.setEnabled(true);
 
         frameSlide.setOpaque(false);
         frameSlide.setMajorTickSpacing(10);
         frameSlide.setPaintLabels(true);
         frameSlide.setPaintTicks(true);
-        frameSlide.setEnabled(false);
+        frameSlide.setEnabled(true);
 
         sizeSlide.setOpaque(false);
         sizeSlide.setMajorTickSpacing(4);
         sizeSlide.setPaintLabels(true);
         sizeSlide.setPaintTicks(true);
-        sizeSlide.setEnabled(false);
+        sizeSlide.setEnabled(true);
 
         marginSlide.setOpaque(false);
         marginSlide.setMajorTickSpacing(2);
         marginSlide.setPaintLabels(true);
         marginSlide.setPaintTicks(true);
-        marginSlide.setEnabled(false);
+        marginSlide.setEnabled(true);
 
         smoothSlide.setOpaque(false);
         smoothSlide.setMajorTickSpacing(4);
         smoothSlide.setPaintLabels(true);
         smoothSlide.setPaintTicks(true);
-        smoothSlide.setEnabled(false);
+        smoothSlide.setEnabled(true);
 
         constructButton.setFocusPainted(false);
-        constructButton.setEnabled(false);
+        constructButton.setEnabled(true);
         constructButton.setActionCommand("construct");
         constructButton.addActionListener(this);
 
         pauseButton.setFocusPainted(false);
         pauseButton.setActionCommand("pause");
         pauseButton.addActionListener(this);
+        pauseButton.setText("Run");
 
         quitButton.setFocusPainted(false);
         quitButton.setActionCommand("quit");
@@ -134,7 +135,7 @@ public class Screen extends JPanel implements ActionListener {
         Dimension sliderSize = new Dimension(140, 45);
         mainPanel.setPreferredSize(new Dimension(this.width / 4, this.height));
         subPanel.setPreferredSize(new Dimension(160, 450));
-        mainLabel.setPreferredSize(labelSize);
+        mainLabel.setPreferredSize(new Dimension(120, 18));
         settingsPanel.setPreferredSize(new Dimension(140, 320));
         frameLabel.setPreferredSize(labelSize);
         sizeLabel.setPreferredSize(labelSize);
@@ -211,8 +212,7 @@ public class Screen extends JPanel implements ActionListener {
         this.game = new Game(this.width, this.height, tileSize, margin, worldType, smoothing, framerate);
         this.topFrame.getContentPane().add(this.game);
         this.topFrame.pack();
-        this.game.buildWorld();
-        this.pauseButton.doClick();
+        this.game.start();
     }
 
     public void getConstructType() {

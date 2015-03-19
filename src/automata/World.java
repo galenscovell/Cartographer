@@ -10,6 +10,7 @@ package automata;
 import logic.Builder;
 import logic.CaveBuilder;
 import logic.MazeBuilder;
+import logic.Point;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -50,15 +51,20 @@ public class World {
         this.tiles = this.builder.getTiles();
     }
 
-    public Explorer placeExplorer() {
+    public Point findFloorSpace() {
+        Point floorPoint;
         for (Tile tile : this.tiles) {
             if (tile.isFloor(this.grid)) {
-                this.grid[tile.getX()][tile.getY()] = 2;
-                Explorer explorer = new Explorer(tile.getX(), tile.getY());
-                return explorer;
+                floorPoint = new Point(tile.getX(), tile.getY());
+                return floorPoint;
             }
         }
         return null;
+    }
+
+    public Explorer placeExplorer(Point point) {
+        Explorer explorer = new Explorer(point.pointX(), point.pointY());
+        return explorer;
     }
 
     public int checkAdjacent(Tile tile) {
@@ -92,15 +98,6 @@ public class World {
         } else {
             return false;
         }
-    }
-
-    public boolean isFloorSpace() {
-        for (Tile tile : this.tiles) {
-            if (tile.isFloor(this.grid)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public void update() {
