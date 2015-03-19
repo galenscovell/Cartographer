@@ -4,8 +4,7 @@
  * Handles game loop.
  *
  * Begins World, Thread and sets up BufferStrategy
- * Loops specified times through world-building process
- * Loops through exploration process
+ * Loops specified times through world-building process and exploration
  * Limits FPS
  */
 
