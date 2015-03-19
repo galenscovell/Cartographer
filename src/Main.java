@@ -23,16 +23,16 @@ public class Main {
         int cellSize = 8;
         int margin   = 2;
 
-        Game game     = new Game(windowX, windowY, cellSize, margin);
-        Screen screen = new Screen(windowX, windowY, game);
-        JFrame frame  = new JFrame();
-
+        JFrame frame = new JFrame();
+        Game game = new Game(windowX, windowY, cellSize, margin, "maze", 20, 32);
+        Screen screen = new Screen(windowX, windowY, game, frame);
+        
         frame.getContentPane().setBackground(new Color(0x2c3e50));
         frame.setResizable(false);
         frame.setTitle("Dungeon Creator");;
         frame.setLayout(new FlowLayout());
-        frame.add(game);
         frame.add(screen);
+        frame.add(game);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);

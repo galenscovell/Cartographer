@@ -31,14 +31,19 @@ public class World {
     private Explorer explorer;
     
 
-    public World(int width, int height, int tileSize, int margin) {
+    public World(int width, int height, int tileSize, int margin, String worldType) {
         this.tileSize = tileSize;
         this.margin = margin;
 
         this.columns = width / (tileSize + margin);
         this.rows = height / (tileSize + margin);
 
-        this.builder = new CaveBuilder(this.columns, this.rows);
+        if (worldType.equals("maze")) {
+            this.builder = new MazeBuilder(this.columns, this.rows);
+        } else if (worldType.equals("cave")) {
+            this.builder = new CaveBuilder(this.columns, this.rows);
+        }
+
         this.builder.build();
 
         this.grid = this.builder.getGrid();

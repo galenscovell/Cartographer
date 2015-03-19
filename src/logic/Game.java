@@ -5,7 +5,7 @@
  *
  * Begins World, Thread and sets up BufferStrategy
  * Loops specified times through world-building process
- * Loops specified times through exploration process
+ * Loops through exploration process
  * Limits FPS
  */
 
@@ -25,22 +25,25 @@ import java.awt.image.BufferStrategy;
 
 
 public class Game extends Canvas implements Runnable {
-    private int smoothingTicks = 2;
-    private int exploringTicks = 2000;
+    private int smoothingTicks;
+    private int framerate;
+    private boolean running = false;
+
     private World world;
     private Explorer explorer;
     private Thread thread;
-    private int framerate = 20;
-    private boolean running = false;
 
 
-    public Game(int x, int y, int size, int margin) {
-        this.world = new World(x, y, size, margin);
+    public Game(int x, int y, int size, int margin, String worldType, int smoothing, int framerate) {
+        this.smoothingTicks = smoothing;
+        this.framerate = framerate;
+        this.world = new World(x, y, size, margin, worldType);
         this.setPreferredSize(new Dimension(x, y));
     }
 
     public synchronized void start() {
         this.thread = new Thread(this, "Simulation");
+        buildWorld();
         this.running = true;
         this.thread.start(); // call run()
     }
@@ -59,14 +62,14 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    public void run() {
+    public void buildWorld() {
         long start, end, sleepTime;
 
-        // World building loop
-        while (this.running && this.smoothingTicks > 0) {
+        while (this.smoothingTicks > 0) {
             start = System.currentTimeMillis();
             this.world.update();
             render();
+
             this.smoothingTicks--;
             end = System.currentTimeMillis();
             // Sleep to match FPS limit
@@ -79,16 +82,19 @@ public class Game extends Canvas implements Runnable {
                 }
             }
         }
+    }
 
+    public void run() {
+        long start, end, sleepTime;
         this.explorer = this.world.placeExplorer();
 
         // Explorer loop
-        while (this.running && this.exploringTicks > 0) {
+        while (this.running) {
             if (this.explorer.movement(this.world)) {
                 // Current explorer moves if able
                 start = System.currentTimeMillis();
                 render();
-                this.exploringTicks--;
+
                 end = System.currentTimeMillis();
                 // Sleep to match FPS limit
                 sleepTime = (1000 / this.framerate) - (end - start);
@@ -103,8 +109,7 @@ public class Game extends Canvas implements Runnable {
                 // Place new explorer if empty space remains
                 this.explorer = this.world.placeExplorer();
             } else {
-                // Stop exploration runtime
-                this.exploringTicks = 0;
+                stop();
             }
         }
     }
