@@ -4,7 +4,7 @@ Cave-Creator
 ======
 
 <b>Description:</b>
-<blockquote>Cave and maze creator coded in Java (1.8). Utilizes cellular automata and an elegant interface to construct randomized and varied pixel worlds. I'm having a lot of fun adding functionality to it, so check back for updates.</blockquote>
+<blockquote>Cave and maze creator coded in Java. Utilizes cellular automata and an elegant interface to construct randomized and varied pixel worlds. I'm having a lot of fun adding functionality to it, so check back for updates!</blockquote>
 
 <b>Features:</b>
 * Cellular automata for spontaneous creation of a grid-based world
@@ -17,4 +17,4 @@ Cave-Creator
 * Planned: Maze solving unit (also requires creation of solvable mazes...)
 
 <b>Usage:</b>
-<blockquote>java -jar CaveCreator.jar</blockquote>
+<blockquote>Begin the application via the jar file found in the bin directory. :]</blockquote>
