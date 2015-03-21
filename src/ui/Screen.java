@@ -61,11 +61,11 @@ public class Screen extends JPanel implements ActionListener {
         JLabel frameLabel    = new JLabel("FPS", JLabel.CENTER);
         this.frameSlide      = new JSlider(JSlider.HORIZONTAL, 2, 62, 32);
         JLabel sizeLabel     = new JLabel("Tile size", JLabel.CENTER);
-        this.sizeSlide       = new JSlider(JSlider.HORIZONTAL, 2, 22, 8);
+        this.sizeSlide       = new JSlider(JSlider.HORIZONTAL, 2, 32, 8);
         JLabel marginLabel   = new JLabel("Tile margin", JLabel.CENTER);
         this.marginSlide     = new JSlider(JSlider.HORIZONTAL, 0, 10, 2);
         JLabel smoothLabel   = new JLabel("Smoothing passes", JLabel.CENTER);
-        this.smoothSlide     = new JSlider(JSlider.HORIZONTAL, 2, 22, 6);
+        this.smoothSlide     = new JSlider(JSlider.HORIZONTAL, 2, 22, 3);
         this.constructButton = new JButton("Construct");
         this.pauseButton     = new JButton("Pause");
         JButton quitButton   = new JButton("Quit");
@@ -96,7 +96,7 @@ public class Screen extends JPanel implements ActionListener {
         frameSlide.setEnabled(true);
 
         sizeSlide.setOpaque(false);
-        sizeSlide.setMajorTickSpacing(4);
+        sizeSlide.setMajorTickSpacing(6);
         sizeSlide.setPaintLabels(true);
         sizeSlide.setPaintTicks(true);
         sizeSlide.setEnabled(true);
@@ -210,9 +210,11 @@ public class Screen extends JPanel implements ActionListener {
         this.topFrame.getContentPane().remove(this.game);
 
         this.game = new Game(this.width, this.height, tileSize, margin, worldType, smoothing, framerate);
+
         this.topFrame.getContentPane().add(this.game);
         this.topFrame.pack();
         this.game.start();
+        
     }
 
     public void getConstructType() {

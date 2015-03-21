@@ -17,6 +17,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import java.awt.image.BufferStrategy;
 
@@ -41,44 +42,23 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
+        render();
         this.thread = new Thread(this, "Simulation");
-        buildWorld();
         this.thread.start(); // call run()
     }
 
     public synchronized void stop() {
+        render();
         this.running = false;
         this.thread.interrupt();
     }
 
     public void pause() {
+        render();
         if (this.running) {
             this.running = false;
         } else {
             this.running = true;
-        }
-    }
-
-    public void buildWorld() {
-        long start, end, sleepTime;
-
-        while (this.smoothingTicks > 0) {
-            start = System.currentTimeMillis();
-
-            this.world.update();
-            render();
-
-            this.smoothingTicks--;
-            end = System.currentTimeMillis();
-            // Sleep to match FPS limit
-            sleepTime = (1000 / this.framerate) - (end - start);
-            if (sleepTime > 0) {
-                try {
-                    Thread.sleep(sleepTime); 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -87,6 +67,12 @@ public class Game extends Canvas implements Runnable {
 
         while (true) {
             start = System.currentTimeMillis();
+                
+            if (this.smoothingTicks > 0) {
+                this.world.update();
+                render();
+                this.smoothingTicks--;
+            } 
 
             if (this.running) {
                 if (this.explorer == null) {
@@ -94,7 +80,6 @@ public class Game extends Canvas implements Runnable {
                     if (floorPoint != null) {
                         this.explorer = this.world.placeExplorer(floorPoint);
                     } else {
-                        render();
                         pause();
                     }
                 } else if (this.explorer.movement(this.world) == false) {
@@ -110,7 +95,7 @@ public class Game extends Canvas implements Runnable {
                 try {
                     Thread.sleep(sleepTime); 
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    this.thread.interrupt();
                 }
             }
         }
@@ -123,7 +108,7 @@ public class Game extends Canvas implements Runnable {
             return;
         }
 
-        Graphics gfx = bs.getDrawGraphics();
+        Graphics2D gfx = (Graphics2D) bs.getDrawGraphics();
         // Clear screen
         gfx.setColor(new Color(0x2c3e50));
         gfx.fillRect(0, 0, getWidth(), getHeight());
