@@ -19,15 +19,16 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import java.awt.image.BufferStrategy;
+import javax.swing.JPanel;
 
 @SuppressWarnings ("serial")
 
 
-public class Game extends Canvas implements Runnable {
+public class Game extends JPanel implements Runnable {
     private int smoothingTicks;
     private int framerate;
     private boolean running = false;
+    private boolean threadActive;
 
     private World world;
     private Explorer explorer;
@@ -42,19 +43,22 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void start() {
-        render();
         this.thread = new Thread(this, "Simulation");
+        this.threadActive = true;
         this.thread.start(); // call run()
     }
 
     public synchronized void stop() {
-        render();
         this.running = false;
-        this.thread.interrupt();
+        this.threadActive = false;
+        try {
+            this.thread.join();
+        } catch (InterruptedException e) {
+            this.thread.interrupt();
+        }
     }
 
     public void pause() {
-        render();
         if (this.running) {
             this.running = false;
         } else {
@@ -65,12 +69,11 @@ public class Game extends Canvas implements Runnable {
     public void run() {
         long start, end, sleepTime;
 
-        while (true) {
+        while (this.threadActive) {
             start = System.currentTimeMillis();
                 
             if (this.smoothingTicks > 0) {
                 this.world.update();
-                render();
                 this.smoothingTicks--;
             } 
 
@@ -87,7 +90,7 @@ public class Game extends Canvas implements Runnable {
                 }
             }
 
-            render();
+            this.repaint();
             end = System.currentTimeMillis();
             // Sleep to match FPS limit
             sleepTime = (1000 / this.framerate) - (end - start);
@@ -101,21 +104,15 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    public void render() {
-        BufferStrategy bs = getBufferStrategy();
-        if (bs == null) {
-            createBufferStrategy(3);
-            return;
-        }
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D gfx = (Graphics2D) g;
 
-        Graphics2D gfx = (Graphics2D) bs.getDrawGraphics();
         // Clear screen
         gfx.setColor(new Color(0x2c3e50));
         gfx.fillRect(0, 0, getWidth(), getHeight());
         // Render next frame
         this.world.render(gfx);
-
-        gfx.dispose();
-        bs.show();
     }
 }

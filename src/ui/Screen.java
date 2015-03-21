@@ -199,13 +199,12 @@ public class Screen extends JPanel implements ActionListener {
         this.setOpaque(false);
     }
 
-    public void constructNew(String worldType) {
+    private void constructNew(String worldType) {
         int tileSize = this.sizeSlide.getValue();
         int margin = this.marginSlide.getValue();
         int framerate = this.frameSlide.getValue();
         int smoothing = this.smoothSlide.getValue();
 
-        
         this.game.stop();
         this.topFrame.getContentPane().remove(this.game);
 
@@ -214,10 +213,9 @@ public class Screen extends JPanel implements ActionListener {
         this.topFrame.getContentPane().add(this.game);
         this.topFrame.pack();
         this.game.start();
-        
     }
 
-    public void getConstructType() {
+    private void getConstructType() {
         boolean maze = this.mazeCheck.isSelected();
         boolean cave = this.caveCheck.isSelected();
 
