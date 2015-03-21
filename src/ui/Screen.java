@@ -186,9 +186,9 @@ public class Screen extends JPanel implements ActionListener {
         settingsPanel.add(smoothLabel);
         settingsPanel.add(smoothSlide);
 
-        subPanel.add(this.mainLabel);
+        subPanel.add(mainLabel);
         subPanel.add(settingsPanel);
-        subPanel.add(this.constructButton);
+        subPanel.add(constructButton);
         subPanel.add(pauseButton);
         subPanel.add(quitButton);
 
@@ -205,9 +205,9 @@ public class Screen extends JPanel implements ActionListener {
         int framerate = this.frameSlide.getValue();
         int smoothing = this.smoothSlide.getValue();
 
+        
         this.game.stop();
         this.topFrame.getContentPane().remove(this.game);
-        this.topFrame.repaint();
 
         this.game = new Game(this.width, this.height, tileSize, margin, worldType, smoothing, framerate);
         this.topFrame.getContentPane().add(this.game);

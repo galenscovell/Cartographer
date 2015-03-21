@@ -24,12 +24,12 @@ public class Main {
         int margin   = 2;
 
         JFrame frame = new JFrame();
-        Game game = new Game(windowX, windowY, tileSize, margin, "maze", 20, 32);
+        Game game = new Game(windowX, windowY, tileSize, margin, "cave", 3, 32);
         Screen screen = new Screen(windowX, windowY, game, frame);
         
         frame.getContentPane().setBackground(new Color(0x2c3e50));
         frame.setResizable(false);
-        frame.setTitle("Dungeon Creator");;
+        frame.setTitle("Dungeon Creator");
         frame.setLayout(new FlowLayout());
         frame.add(screen);
         frame.add(game);

@@ -27,7 +27,6 @@ public class Game extends Canvas implements Runnable {
     private int smoothingTicks;
     private int framerate;
     private boolean running = false;
-    private boolean firstRun = true;
 
     private World world;
     private Explorer explorer;
@@ -44,21 +43,19 @@ public class Game extends Canvas implements Runnable {
     public synchronized void start() {
         this.thread = new Thread(this, "Simulation");
         buildWorld();
-        this.running = true;
         this.thread.start(); // call run()
     }
 
     public synchronized void stop() {
         this.running = false;
-        this.thread = null;
+        this.thread.interrupt();
     }
 
     public void pause() {
-        if (this.thread == null) {
-            this.world.clearActive();
-            start();
+        if (this.running) {
+            this.running = false;
         } else {
-            stop();
+            this.running = true;
         }
     }
 
@@ -67,6 +64,7 @@ public class Game extends Canvas implements Runnable {
 
         while (this.smoothingTicks > 0) {
             start = System.currentTimeMillis();
+
             this.world.update();
             render();
 
@@ -85,41 +83,34 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void run() {
-        if (this.firstRun) {
-            this.firstRun = false;
-            pause();
-        }
-
         long start, end, sleepTime;
-        
-        // Explorer loop
-        while (this.running) {
-            if (this.explorer != null && this.explorer.movement(this.world)) {
-                // Current explorer moves if able
-                start = System.currentTimeMillis();
-                render();
 
-                end = System.currentTimeMillis();
-                // Sleep to match FPS limit
-                sleepTime = (1000 / this.framerate) - (end - start);
-                if (sleepTime > 0) {
-                    try {
-                        Thread.sleep(sleepTime); 
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        while (true) {
+            start = System.currentTimeMillis();
+
+            if (this.running) {
+                if (this.explorer == null) {
+                    Point floorPoint = this.world.findFloorSpace();
+                    if (floorPoint != null) {
+                        this.explorer = this.world.placeExplorer(floorPoint);
+                    } else {
+                        render();
+                        pause();
                     }
+                } else if (this.explorer.movement(this.world) == false) {
+                    this.explorer = null;
                 }
-            } else {
-                // Check if world contains empty floor tiles
-                Point floorPoint = this.world.findFloorSpace();
-                if (floorPoint != null) {
-                    // Place new explorer if empty floor tile remains
-                    this.explorer = this.world.placeExplorer(floorPoint);
-                } else {
-                    // Render one last time to finish current frame
-                    render();
-                    // End exploration
-                    stop();
+            }
+
+            render();
+            end = System.currentTimeMillis();
+            // Sleep to match FPS limit
+            sleepTime = (1000 / this.framerate) - (end - start);
+            if (sleepTime > 0) {
+                try {
+                    Thread.sleep(sleepTime); 
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
         }
