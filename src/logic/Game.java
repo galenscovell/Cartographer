@@ -4,7 +4,7 @@
  * Handles game loop.
  *
  * Begins World, Thread and sets up BufferStrategy
- * Loops specified times through world-building process and exploration
+ * Loops through world-building process and exploration
  * Limits FPS
  */
 
@@ -66,6 +66,7 @@ public class Game extends JPanel implements Runnable {
         }
     }
 
+    @Override
     public void run() {
         long start, end, sleepTime;
 
@@ -105,7 +106,7 @@ public class Game extends JPanel implements Runnable {
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D gfx = (Graphics2D) g;
 

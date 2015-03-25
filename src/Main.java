@@ -1,43 +1,18 @@
 
 /**
  * MAIN CLASS
- * Responsible for entry into application.
+ * Main entry for Cave Creator application.
  */
 
-import logic.Game;
-import ui.Screen;
+import ui.GameFrame;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-
-import javax.swing.JFrame;
-
-@SuppressWarnings ("serial")
+import javax.swing.SwingUtilities;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        int windowX  = 720;
-        int windowY  = 480;
-        int tileSize = 8;
-        int margin   = 2;
-
-        JFrame frame = new JFrame();
-        Game game = new Game(windowX, windowY, tileSize, margin, "cave", 3, 32);
-        Screen screen = new Screen(windowX, windowY, game, frame);
-        
-        frame.getContentPane().setBackground(new Color(0x2c3e50));
-        frame.setResizable(false);
-        frame.setTitle("Dungeon Creator");
-        frame.setLayout(new FlowLayout());
-        frame.add(screen);
-        frame.add(game);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
-
-        game.start();
+        GameFrame gameFrame = new GameFrame(960, 520);
+        SwingUtilities.invokeLater(gameFrame);
     }
 }

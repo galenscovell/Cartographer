@@ -8,30 +8,31 @@ package ui;
 
 import logic.Game;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 
-@SuppressWarnings ("serial")
 
-
-public class Screen extends JPanel implements ActionListener {
-    private int width;
-    private int height;
+public class Screen implements ActionListener {
     private Game game;
+    private JFrame frame;
+    private JPanel panel;
 
-    private JCheckBox mazeCheck;
-    private JCheckBox caveCheck;
+    private JRadioButton mazeCheck;
+    private JRadioButton caveCheck;
     private JSlider frameSlide;
     private JSlider sizeSlide;
     private JSlider marginSlide;
@@ -41,23 +42,26 @@ public class Screen extends JPanel implements ActionListener {
     private JLabel mainLabel;
     private boolean paused = true;
 
-    private JFrame topFrame;
 
-
-    public Screen(int width, int height, Game game, JFrame frame) {
-        this.width = width;
-        this.height = height;
+    public Screen(Game game, JFrame frame) {
         this.game = game;
-        this.topFrame = frame;
-
-
+        this.frame = frame;
+        this.panel = new JPanel();
+        panel.setPreferredSize(new Dimension(200, 480));
+        panel.setBackground(new Color(0x31312F));
+        game.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+        panel.setOpaque(true);
+        createComponents(panel);
+        game.start();
+    }
+        
+    private void createComponents(Container container) {
         // Initialize components
-        JPanel mainPanel     = new JPanel();
         JPanel subPanel      = new JPanel();
         this.mainLabel       = new JLabel("Settings", JLabel.CENTER);
         JPanel settingsPanel = new JPanel();
-        this.mazeCheck       = new JCheckBox("Maze");
-        this.caveCheck       = new JCheckBox("Cave");
+        this.mazeCheck       = new JRadioButton("Maze");
+        this.caveCheck       = new JRadioButton("Cave");
         JLabel frameLabel    = new JLabel("FPS", JLabel.CENTER);
         this.frameSlide      = new JSlider(JSlider.HORIZONTAL, 2, 62, 32);
         JLabel sizeLabel     = new JLabel("Tile size", JLabel.CENTER);
@@ -72,14 +76,9 @@ public class Screen extends JPanel implements ActionListener {
 
 
         // Set specific component settings
-        mainPanel.setBackground(new Color(0x31312F));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-
         subPanel.setBackground(new Color(0xE7E7E7));
-        subPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         settingsPanel.setBackground(new Color(0xE7E7E7));
-        settingsPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
         mazeCheck.setOpaque(false);
         mazeCheck.setFocusPainted(false);
@@ -88,6 +87,10 @@ public class Screen extends JPanel implements ActionListener {
         caveCheck.setOpaque(false);
         caveCheck.setFocusPainted(false);
         caveCheck.setEnabled(true);
+
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(mazeCheck);
+        buttonGroup.add(caveCheck);
 
         frameSlide.setOpaque(false);
         frameSlide.setMajorTickSpacing(10);
@@ -128,15 +131,14 @@ public class Screen extends JPanel implements ActionListener {
         quitButton.addActionListener(this);
         
 
-
         // Set component dimensions
-        Dimension labelSize = new Dimension(120, 14);
-        Dimension buttonSize = new Dimension(100, 25);
-        Dimension sliderSize = new Dimension(140, 45);
-        mainPanel.setPreferredSize(new Dimension(this.width / 4, this.height));
-        subPanel.setPreferredSize(new Dimension(160, 450));
-        mainLabel.setPreferredSize(new Dimension(120, 18));
-        settingsPanel.setPreferredSize(new Dimension(140, 320));
+        Dimension labelSize = new Dimension(120, 16);
+        Dimension buttonSize = new Dimension(110, 25);
+        Dimension sliderSize = new Dimension(140, 50);
+
+        subPanel.setPreferredSize(new Dimension(190, 470));
+        mainLabel.setPreferredSize(new Dimension(140, 20));
+        settingsPanel.setPreferredSize(new Dimension(160, 340));
         frameLabel.setPreferredSize(labelSize);
         sizeLabel.setPreferredSize(labelSize);
         marginLabel.setPreferredSize(labelSize);
@@ -174,7 +176,7 @@ public class Screen extends JPanel implements ActionListener {
         quitButton.setFont(smallFont);
 
         
-        // Compose components
+        // Add components
         settingsPanel.add(mazeCheck);
         settingsPanel.add(caveCheck);
         settingsPanel.add(frameLabel);
@@ -192,67 +194,58 @@ public class Screen extends JPanel implements ActionListener {
         subPanel.add(pauseButton);
         subPanel.add(quitButton);
 
-        mainPanel.add(subPanel);
-
-
-        this.add(mainPanel);
-        this.setOpaque(false);
+        container.add(subPanel);
     }
 
     private void constructNew(String worldType) {
-        int tileSize = this.sizeSlide.getValue();
-        int margin = this.marginSlide.getValue();
-        int framerate = this.frameSlide.getValue();
-        int smoothing = this.smoothSlide.getValue();
+        int tileSize = sizeSlide.getValue();
+        int margin = marginSlide.getValue();
+        int framerate = frameSlide.getValue();
+        int smoothing = smoothSlide.getValue();
 
-        this.game.stop();
-        this.topFrame.getContentPane().remove(this.game);
+        game.stop();
+        frame.getContentPane().remove(game);
 
-        this.game = new Game(this.width, this.height, tileSize, margin, worldType, smoothing, framerate);
+        game = new Game(720, 480, tileSize, margin, worldType, smoothing, framerate);
 
-        this.topFrame.getContentPane().add(this.game);
-        this.topFrame.pack();
-        this.game.start();
+        frame.getContentPane().add(game);
+        frame.pack();
+        game.start();
     }
 
     private void getConstructType() {
-        boolean maze = this.mazeCheck.isSelected();
-        boolean cave = this.caveCheck.isSelected();
-
-        if (maze && cave || !maze && !cave) {
-            return;
-        } else if (maze) {
+        if (mazeCheck.isSelected()) {
             constructNew("maze");
-        } else if (cave) {
+        } else if (caveCheck.isSelected()) {
             constructNew("cave");
         }
     }
 
     public void pausePress() {
-        if (this.paused) {
-            this.paused = false;
-            this.mainLabel.setText("Settings");
-            this.pauseButton.setText("Pause");
-            this.constructButton.setEnabled(false);
-            this.mazeCheck.setEnabled(false);
-            this.caveCheck.setEnabled(false);
-            this.frameSlide.setEnabled(false);
-            this.sizeSlide.setEnabled(false);
-            this.marginSlide.setEnabled(false);
-            this.smoothSlide.setEnabled(false);
+        if (paused) {
+            paused = false;
+            mainLabel.setText("Settings");
+            pauseButton.setText("Pause");
+            constructButton.setEnabled(false);
+            mazeCheck.setEnabled(false);
+            caveCheck.setEnabled(false);
+            frameSlide.setEnabled(false);
+            sizeSlide.setEnabled(false);
+            marginSlide.setEnabled(false);
+            smoothSlide.setEnabled(false);
         } else {
-            this.paused = true;
-            this.mainLabel.setText("Paused");
-            this.pauseButton.setText("Run");
-            this.constructButton.setEnabled(true);
-            this.mazeCheck.setEnabled(true);
-            this.caveCheck.setEnabled(true);
-            this.frameSlide.setEnabled(true);
-            this.sizeSlide.setEnabled(true);
-            this.marginSlide.setEnabled(true);
-            this.smoothSlide.setEnabled(true);
+            paused = true;
+            mainLabel.setText("Paused");
+            pauseButton.setText("Run");
+            constructButton.setEnabled(true);
+            mazeCheck.setEnabled(true);
+            caveCheck.setEnabled(true);
+            frameSlide.setEnabled(true);
+            sizeSlide.setEnabled(true);
+            marginSlide.setEnabled(true);
+            smoothSlide.setEnabled(true);
         }
-        this.game.pause();
+        game.pause();
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -266,5 +259,9 @@ public class Screen extends JPanel implements ActionListener {
             this.game.stop();
             System.exit(0);
         }
+    }
+
+    public JPanel getPanel() {
+        return panel;
     }
 }
