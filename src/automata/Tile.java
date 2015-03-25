@@ -20,7 +20,7 @@ public class Tile {
     }
 
     public boolean isWall(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 0) {
+        if (grid[gridX][gridY] == 0) {
             return true;
         } else {
             return false;
@@ -28,7 +28,7 @@ public class Tile {
     }
 
     public boolean isFloor(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 1) {
+        if (grid[gridX][gridY] == 1) {
             return true;
         } else {
             return false;
@@ -36,7 +36,15 @@ public class Tile {
     }
 
     public boolean isExplored(int[][] grid) {
-        if (grid[this.gridX][this.gridY] == 2) {
+        if (grid[gridX][gridY] == 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isCorridor(int[][] grid) {
+        if (grid[gridX][gridY] == 3) {
             return true;
         } else {
             return false;
@@ -44,22 +52,22 @@ public class Tile {
     }
 
     public void updateNeighbors(int value) {
-        this.floorNeighbors = value;
+        floorNeighbors = value;
     }
 
     public int getNeighbors() {
-        return this.floorNeighbors;
+        return floorNeighbors;
     }
 
     public int getX() {
-        return this.gridX;
+        return gridX;
     }
 
     public int getY() {
-        return this.gridY;
+        return gridY;
     }
 
     public String toString() {
-        return "Tile at [" + this.gridX + ", " + this.gridY + "]";
+        return "Tile at [" + gridX + ", " + gridY + "]";
     }
 }

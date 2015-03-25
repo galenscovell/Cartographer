@@ -16,7 +16,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -33,6 +32,7 @@ public class Screen implements ActionListener {
 
     private JRadioButton mazeCheck;
     private JRadioButton caveCheck;
+    private JRadioButton dungeonCheck;
     private JSlider frameSlide;
     private JSlider sizeSlide;
     private JSlider marginSlide;
@@ -40,6 +40,7 @@ public class Screen implements ActionListener {
     private JButton constructButton;
     private JButton pauseButton;
     private JLabel mainLabel;
+
     private boolean paused = true;
 
 
@@ -49,7 +50,6 @@ public class Screen implements ActionListener {
         this.panel = new JPanel();
         panel.setPreferredSize(new Dimension(200, 480));
         panel.setBackground(new Color(0x31312F));
-        game.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         panel.setOpaque(true);
         createComponents(panel);
         game.start();
@@ -62,14 +62,15 @@ public class Screen implements ActionListener {
         JPanel settingsPanel = new JPanel();
         this.mazeCheck       = new JRadioButton("Maze");
         this.caveCheck       = new JRadioButton("Cave");
+        this.dungeonCheck    = new JRadioButton("Dungeon");
         JLabel frameLabel    = new JLabel("FPS", JLabel.CENTER);
         this.frameSlide      = new JSlider(JSlider.HORIZONTAL, 2, 62, 32);
         JLabel sizeLabel     = new JLabel("Tile size", JLabel.CENTER);
-        this.sizeSlide       = new JSlider(JSlider.HORIZONTAL, 2, 32, 8);
+        this.sizeSlide       = new JSlider(JSlider.HORIZONTAL, 2, 32, 6);
         JLabel marginLabel   = new JLabel("Tile margin", JLabel.CENTER);
         this.marginSlide     = new JSlider(JSlider.HORIZONTAL, 0, 10, 2);
         JLabel smoothLabel   = new JLabel("Smoothing passes", JLabel.CENTER);
-        this.smoothSlide     = new JSlider(JSlider.HORIZONTAL, 2, 22, 3);
+        this.smoothSlide     = new JSlider(JSlider.HORIZONTAL, 2, 22, 4);
         this.constructButton = new JButton("Construct");
         this.pauseButton     = new JButton("Pause");
         JButton quitButton   = new JButton("Quit");
@@ -88,9 +89,14 @@ public class Screen implements ActionListener {
         caveCheck.setFocusPainted(false);
         caveCheck.setEnabled(true);
 
+        dungeonCheck.setOpaque(false);
+        dungeonCheck.setFocusPainted(false);
+        dungeonCheck.setEnabled(true);
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(mazeCheck);
         buttonGroup.add(caveCheck);
+        buttonGroup.add(dungeonCheck);
 
         frameSlide.setOpaque(false);
         frameSlide.setMajorTickSpacing(10);
@@ -132,13 +138,14 @@ public class Screen implements ActionListener {
         
 
         // Set component dimensions
-        Dimension labelSize = new Dimension(120, 16);
+        Dimension labelSize = new Dimension(120, 14);
         Dimension buttonSize = new Dimension(110, 25);
-        Dimension sliderSize = new Dimension(140, 50);
+        Dimension sliderSize = new Dimension(140, 45);
 
-        subPanel.setPreferredSize(new Dimension(190, 470));
+        subPanel.setPreferredSize(new Dimension(180, 470));
         mainLabel.setPreferredSize(new Dimension(140, 20));
         settingsPanel.setPreferredSize(new Dimension(160, 340));
+
         frameLabel.setPreferredSize(labelSize);
         sizeLabel.setPreferredSize(labelSize);
         marginLabel.setPreferredSize(labelSize);
@@ -166,6 +173,7 @@ public class Screen implements ActionListener {
 
         mazeCheck.setFont(smallFont);
         caveCheck.setFont(smallFont);
+        dungeonCheck.setFont(smallFont);
         frameSlide.setFont(smallFont);
         sizeSlide.setFont(smallFont);
         marginSlide.setFont(smallFont);
@@ -179,6 +187,7 @@ public class Screen implements ActionListener {
         // Add components
         settingsPanel.add(mazeCheck);
         settingsPanel.add(caveCheck);
+        settingsPanel.add(dungeonCheck);
         settingsPanel.add(frameLabel);
         settingsPanel.add(frameSlide);
         settingsPanel.add(sizeLabel);
@@ -197,31 +206,33 @@ public class Screen implements ActionListener {
         container.add(subPanel);
     }
 
-    private void constructNew(String worldType) {
+    private void constructNewGame(String worldType) {
         int tileSize = sizeSlide.getValue();
         int margin = marginSlide.getValue();
         int framerate = frameSlide.getValue();
         int smoothing = smoothSlide.getValue();
 
         game.stop();
-        frame.getContentPane().remove(game);
+        frame.remove(game);
 
-        game = new Game(720, 480, tileSize, margin, worldType, smoothing, framerate);
+        this.game = new Game(720, 480, tileSize, margin, worldType, smoothing, framerate);
 
-        frame.getContentPane().add(game);
+        frame.add(game);
         frame.pack();
         game.start();
     }
 
-    private void getConstructType() {
+    private void getWorldType() {
         if (mazeCheck.isSelected()) {
-            constructNew("maze");
+            constructNewGame("maze");
         } else if (caveCheck.isSelected()) {
-            constructNew("cave");
+            constructNewGame("cave");
+        } else if (dungeonCheck.isSelected()) {
+            constructNewGame("dungeon");
         }
     }
 
-    public void pausePress() {
+    private void pausePress() {
         if (paused) {
             paused = false;
             mainLabel.setText("Settings");
@@ -252,7 +263,7 @@ public class Screen implements ActionListener {
         String command = event.getActionCommand();
 
         if (command.equals("construct")) {
-            getConstructType();
+            getWorldType();
         } else if (command.equals("pause")) {
             pausePress();
         } else if (command.equals("quit")) {

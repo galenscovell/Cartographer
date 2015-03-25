@@ -44,7 +44,7 @@ public class GameFrame implements Runnable {
 
     private void createComponents(Container container) {
         container.setLayout(new FlowLayout());
-        Game game = new Game(720, 480, 8, 2, "cave", 3, 32);
+        Game game = new Game(720, 480, 6, 2, "cave", 4, 32);
         Screen screen = new Screen(game, frame);
         container.add(screen.getPanel());
         container.add(game);

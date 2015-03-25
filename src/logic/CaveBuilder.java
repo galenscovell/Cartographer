@@ -31,15 +31,15 @@ public class CaveBuilder implements Builder {
         Random random = new Random();
         int chance;
 
-        for (int y = 0; y < this.rows; y++) {
-            for (int x = 0; x < this.columns; x++) {
-                this.tiles.add(new Tile(x, y));
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                tiles.add(new Tile(x, y));
                 
                 chance = random.nextInt(100);
                 if (chance < 40) {
-                    this.grid[x][y] = 1;
+                    grid[x][y] = 1;
                 } else {
-                    this.grid[x][y] = 0;
+                    grid[x][y] = 0;
                 }
             }
         }
@@ -49,17 +49,17 @@ public class CaveBuilder implements Builder {
         int floorNeighbors = tile.getNeighbors();
         
         if (floorNeighbors > 3) {
-            this.grid[tile.getX()][tile.getY()] = 1;
+            grid[tile.getX()][tile.getY()] = 1;
         } else if (floorNeighbors < 3) {
-            this.grid[tile.getX()][tile.getY()] = 0;
+            grid[tile.getX()][tile.getY()] = 0;
         }
     }
 
     public int[][] getGrid() {
-        return this.grid;
+        return grid;
     }
 
     public ArrayList<Tile> getTiles() {
-        return this.tiles;
+        return tiles;
     }
 }

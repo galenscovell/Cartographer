@@ -9,6 +9,7 @@ package automata;
 
 import logic.Builder;
 import logic.CaveBuilder;
+import logic.DungeonBuilder;
 import logic.MazeBuilder;
 import logic.Point;
 
@@ -40,12 +41,14 @@ public class World {
         this.rows = height / (tileSize + margin);
 
         if (worldType.equals("maze")) {
-            this.builder = new MazeBuilder(this.columns, this.rows);
+            this.builder = new MazeBuilder(columns, rows);
         } else if (worldType.equals("cave")) {
-            this.builder = new CaveBuilder(this.columns, this.rows);
+            this.builder = new CaveBuilder(columns, rows);
+        } else if (worldType.equals("dungeon")) {
+            this.builder = new DungeonBuilder(columns, rows);
         }
 
-        this.builder.build();
+        builder.build();
 
         this.grid = this.builder.getGrid();
         this.tiles = this.builder.getTiles();
@@ -53,8 +56,8 @@ public class World {
 
     public Point findFloorSpace() {
         Point floorPoint;
-        for (Tile tile : this.tiles) {
-            if (tile.isFloor(this.grid)) {
+        for (Tile tile : tiles) {
+            if (tile.isFloor(grid)) {
                 floorPoint = new Point(tile.getX(), tile.getY());
                 return floorPoint;
             }
@@ -81,7 +84,7 @@ public class World {
                 if (isOutOfBounds(sumX, sumY)) {
                     continue;
                 }
-                if (this.grid[sumX][sumY] == 1) {
+                if (grid[sumX][sumY] == 1) {
                     floorNeighbors++;
                 }
             }
@@ -89,11 +92,10 @@ public class World {
         return floorNeighbors;
     }
 
-    
     public boolean isOutOfBounds(int x, int y) {
         if (x < 0 || y < 0){
             return true;
-        } else if (x >= this.columns || y >= this.rows){
+        } else if (x >= columns || y >= rows){
             return true;
         } else {
             return false;
@@ -101,19 +103,11 @@ public class World {
     }
 
     public void update() {
-        for (Tile tile : this.tiles) {
+        for (Tile tile : tiles) {
             tile.updateNeighbors(checkAdjacent(tile));
         }
-        for (Tile tile : this.tiles) {
-            this.builder.smooth(tile);
-        }
-    }
-
-    public void clearActive() {
-        for (Tile tile : this.tiles) {
-            if (this.grid[tile.getX()][tile.getY()] == 3) {
-                this.grid[tile.getX()][tile.getY()] = 2;
-            }
+        for (Tile tile : tiles) {
+            builder.smooth(tile);
         }
     }
 
@@ -124,19 +118,19 @@ public class World {
         Color explored = new Color(0x2980b9);
         Color active   = new Color(0xecf0f1);
 
-        for (Tile tile : this.tiles) {
-            if (tile.isFloor(this.grid)) {
+        for (Tile tile : tiles) {
+            if (tile.isFloor(grid)) {
                 gfx.setColor(floor);
-            } else if (tile.isWall(this.grid)) {
+            } else if (tile.isWall(grid)) {
                 gfx.setColor(wall);
-            } else if (tile.isExplored(this.grid)) {
+            } else if (tile.isExplored(grid)) {
                 gfx.setColor(explored);
             } else {
                 gfx.setColor(active);
             }
-            screenX = (tile.getX() * (this.tileSize + this.margin)) + 1;
-            screenY = (tile.getY() * (this.tileSize + this.margin)) + 1;
-            gfx.fillRect(screenX, screenY, this.tileSize, this.tileSize);
+            screenX = (tile.getX() * (tileSize + margin)) + 1;
+            screenY = (tile.getY() * (tileSize + margin)) + 1;
+            gfx.fillRect(screenX, screenY, tileSize, tileSize);
         }
     }
 }

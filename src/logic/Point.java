@@ -19,14 +19,14 @@ public class Point {
     }
 
     public int pointX() {
-        return this.x;
+        return x;
     }
 
     public int pointY() {
-        return this.y;
+        return y;
     }
 
     public String toString() {
-        return this.x + ", " + this.y;
+        return x + ", " + y;
     }
 }

@@ -2,10 +2,6 @@
 /**
  * GAME CLASS
  * Handles game loop.
- *
- * Begins World, Thread and sets up BufferStrategy
- * Loops through world-building process and exploration
- * Limits FPS
  */
 
 package logic;
@@ -13,15 +9,12 @@ package logic;
 import automata.Explorer;
 import automata.World;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
-
-@SuppressWarnings ("serial")
 
 
 public class Game extends JPanel implements Runnable {
@@ -45,24 +38,24 @@ public class Game extends JPanel implements Runnable {
     public synchronized void start() {
         this.thread = new Thread(this, "Simulation");
         this.threadActive = true;
-        this.thread.start(); // call run()
+        thread.start(); // call run()
     }
 
     public synchronized void stop() {
-        this.running = false;
-        this.threadActive = false;
+        running = false;
+        threadActive = false;
         try {
-            this.thread.join();
+            thread.join();
         } catch (InterruptedException e) {
-            this.thread.interrupt();
+            thread.interrupt();
         }
     }
 
     public void pause() {
-        if (this.running) {
-            this.running = false;
+        if (running) {
+            running = false;
         } else {
-            this.running = true;
+            running = true;
         }
     }
 
@@ -70,36 +63,36 @@ public class Game extends JPanel implements Runnable {
     public void run() {
         long start, end, sleepTime;
 
-        while (this.threadActive) {
+        while (threadActive) {
             start = System.currentTimeMillis();
                 
-            if (this.smoothingTicks > 0) {
-                this.world.update();
-                this.smoothingTicks--;
+            if (smoothingTicks > 0) {
+                world.update();
+                smoothingTicks--;
             } 
 
-            if (this.running) {
-                if (this.explorer == null) {
-                    Point floorPoint = this.world.findFloorSpace();
+            if (running) {
+                if (explorer == null) {
+                    Point floorPoint = world.findFloorSpace();
                     if (floorPoint != null) {
-                        this.explorer = this.world.placeExplorer(floorPoint);
+                        explorer = world.placeExplorer(floorPoint);
                     } else {
                         pause();
                     }
-                } else if (this.explorer.movement(this.world) == false) {
-                    this.explorer = null;
+                } else if (explorer.movement(world) == false) {
+                    explorer = null;
                 }
             }
 
-            this.repaint();
+            repaint();
             end = System.currentTimeMillis();
             // Sleep to match FPS limit
-            sleepTime = (1000 / this.framerate) - (end - start);
+            sleepTime = (1000 / framerate) - (end - start);
             if (sleepTime > 0) {
                 try {
                     Thread.sleep(sleepTime); 
                 } catch (InterruptedException e) {
-                    this.thread.interrupt();
+                    thread.interrupt();
                 }
             }
         }

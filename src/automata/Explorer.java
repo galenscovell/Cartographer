@@ -28,8 +28,8 @@ public class Explorer {
         int sumX, sumY;
 
         for (int x = -1; x <= 1; x += 2) {
-            sumX = this.getX() + x;
-            sumY = this.getY();
+            sumX = getX() + x;
+            sumY = getY();
 
             if (world.isOutOfBounds(sumX, sumY)) {
                 continue;
@@ -40,8 +40,8 @@ public class Explorer {
         }
 
         for (int y = -1; y <= 1; y += 2) {
-            sumX = this.getX();
-            sumY = this.getY() + y;
+            sumX = getX();
+            sumY = getY() + y;
 
             if (world.isOutOfBounds(sumX, sumY)) {
                 continue;
@@ -51,7 +51,7 @@ public class Explorer {
             }
         }
 
-        world.grid[this.gridX][this.gridY] = 2;
+        world.grid[gridX][gridY] = 2;
         if (options.size() > 0) {
             Random random = new Random();
             int choice = random.nextInt(options.size());
@@ -64,20 +64,20 @@ public class Explorer {
     }
 
     public void moveToTile(int newX, int newY, int[][] grid) {
-        this.gridX = newX;
-        this.gridY = newY;
-        grid[this.gridX][this.gridY] = 3;
+        gridX = newX;
+        gridY = newY;
+        grid[gridX][gridY] = 3;
     }
 
     public int getX() {
-        return this.gridX;
+        return gridX;
     }
 
     public int getY() {
-        return this.gridY;
+        return gridY;
     }
 
     public String toString() {
-        return "Explorer at [" + this.gridX + ", " + this.gridY + "]";
+        return "Explorer at [" + gridX + ", " + gridY + "]";
     }
 }
