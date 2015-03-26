@@ -1,6 +1,6 @@
-<img src='http://galenscovell.github.io/css/pics/mapper.png' width=500px />
+<img src='http://galenscovell.github.io/css/pics/cartographer.png' width=500px />
 
-Mapper
+Cartographer
 ======
 
 <b>Description:</b>
