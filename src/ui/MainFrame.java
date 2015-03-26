@@ -26,7 +26,7 @@ public class MainFrame implements Runnable {
 
     @Override
     public void run() {
-        this.frame = new JFrame("Mapper");
+        this.frame = new JFrame("Cartographer");
         frame.setPreferredSize(new Dimension(windowX, windowY));
         frame.getContentPane().setBackground(new Color(0x2c3e50));
         frame.setResizable(false);
