@@ -1,22 +1,19 @@
 
 /**
  * WORLD CLASS
- * Renders and updates world grid.
  * World is composed of a 2D array grid and a list of matching Tile instances.
  */
 
-package automata;
+package logic;
 
-import logic.Builder;
-import logic.CaveBuilder;
-import logic.DungeonBuilder;
-import logic.MazeBuilder;
-import logic.Point;
+import automata.Explorer;
+import automata.Tile;
 
 import java.awt.Color;
 import java.awt.Graphics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class World {
@@ -28,7 +25,7 @@ public class World {
 
     private Builder builder;
     public int[][] grid;
-    private ArrayList<Tile> tiles;
+    private List<Tile> tiles;
 
     private Explorer explorer;
     

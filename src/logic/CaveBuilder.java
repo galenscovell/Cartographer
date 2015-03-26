@@ -10,6 +10,7 @@ package logic;
 import automata.Tile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -17,7 +18,7 @@ public class CaveBuilder implements Builder {
     private int rows;
     private int columns;
     private int[][] grid;
-    private ArrayList<Tile> tiles;
+    private List<Tile> tiles;
 
     public CaveBuilder(int columns, int rows) {
         this.columns = columns;
@@ -59,7 +60,7 @@ public class CaveBuilder implements Builder {
         return grid;
     }
 
-    public ArrayList<Tile> getTiles() {
+    public List<Tile> getTiles() {
         return tiles;
     }
 }

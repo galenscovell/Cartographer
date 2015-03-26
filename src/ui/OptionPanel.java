@@ -1,12 +1,10 @@
 
 /**
- * SCREEN CLASS
- * Displays construction options to user.
+ * OPTIONPANEL CLASS
+ * Displays construction options to user within panel.
  */
 
 package ui;
-
-import logic.Game;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -25,9 +23,9 @@ import javax.swing.JRadioButton;
 import javax.swing.JSlider;
 
 
-public class Screen implements ActionListener {
-    private Game game;
-    private JFrame frame;
+public class OptionPanel implements ActionListener {
+    private GamePanel gamePanel;
+    private JFrame rootFrame;
     private JPanel panel;
 
     private JRadioButton mazeCheck;
@@ -44,15 +42,16 @@ public class Screen implements ActionListener {
     private boolean paused = true;
 
 
-    public Screen(Game game, JFrame frame) {
-        this.game = game;
-        this.frame = frame;
+    public OptionPanel(GamePanel gamePanel, JFrame rootFrame) {
+        this.gamePanel = gamePanel;
+        this.rootFrame = rootFrame;
         this.panel = new JPanel();
+
         panel.setPreferredSize(new Dimension(200, 480));
         panel.setBackground(new Color(0x31312F));
         panel.setOpaque(true);
         createComponents(panel);
-        game.start();
+        gamePanel.start();
     }
         
     private void createComponents(Container container) {
@@ -212,14 +211,13 @@ public class Screen implements ActionListener {
         int framerate = frameSlide.getValue();
         int smoothing = smoothSlide.getValue();
 
-        game.stop();
-        frame.remove(game);
+        gamePanel.stop();
+        rootFrame.remove(gamePanel);
 
-        this.game = new Game(720, 480, tileSize, margin, worldType, smoothing, framerate);
-
-        frame.add(game);
-        frame.pack();
-        game.start();
+        this.gamePanel = new GamePanel(tileSize, margin, worldType, framerate, smoothing);
+        rootFrame.add(gamePanel);
+        rootFrame.pack();
+        gamePanel.start();
     }
 
     private void getWorldType() {
@@ -240,6 +238,7 @@ public class Screen implements ActionListener {
             constructButton.setEnabled(false);
             mazeCheck.setEnabled(false);
             caveCheck.setEnabled(false);
+            dungeonCheck.setEnabled(false);
             frameSlide.setEnabled(false);
             sizeSlide.setEnabled(false);
             marginSlide.setEnabled(false);
@@ -251,12 +250,13 @@ public class Screen implements ActionListener {
             constructButton.setEnabled(true);
             mazeCheck.setEnabled(true);
             caveCheck.setEnabled(true);
+            dungeonCheck.setEnabled(true);
             frameSlide.setEnabled(true);
             sizeSlide.setEnabled(true);
             marginSlide.setEnabled(true);
             smoothSlide.setEnabled(true);
         }
-        game.pause();
+        gamePanel.pause();
     }
 
     public void actionPerformed(ActionEvent event) {
@@ -267,7 +267,7 @@ public class Screen implements ActionListener {
         } else if (command.equals("pause")) {
             pausePress();
         } else if (command.equals("quit")) {
-            this.game.stop();
+            gamePanel.stop();
             System.exit(0);
         }
     }

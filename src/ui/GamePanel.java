@@ -1,13 +1,14 @@
 
 /**
- * GAME CLASS
- * Handles game loop.
+ * GAMEPANEL CLASS
+ * Handles game loop updating/rendering, displays game within panel.
  */
 
-package logic;
+package ui;
 
 import automata.Explorer;
-import automata.World;
+import logic.World;
+import logic.Point;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -17,8 +18,8 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 
-public class Game extends JPanel implements Runnable {
-    private int smoothingTicks;
+public class GamePanel extends JPanel implements Runnable {
+    private int smoothTicks;
     private int framerate;
     private boolean running = false;
     private boolean threadActive;
@@ -28,35 +29,12 @@ public class Game extends JPanel implements Runnable {
     private Thread thread;
 
 
-    public Game(int x, int y, int tileSize, int margin, String worldType, int smoothing, int framerate) {
-        this.smoothingTicks = smoothing;
+    public GamePanel(int tileSize, int margin, String worldType, int framerate, int smoothing) {
         this.framerate = framerate;
-        this.world = new World(x, y, tileSize, margin, worldType);
-        this.setPreferredSize(new Dimension(x, y));
-    }
-
-    public synchronized void start() {
-        this.thread = new Thread(this, "Simulation");
-        this.threadActive = true;
-        thread.start(); // call run()
-    }
-
-    public synchronized void stop() {
-        running = false;
-        threadActive = false;
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            thread.interrupt();
-        }
-    }
-
-    public void pause() {
-        if (running) {
-            running = false;
-        } else {
-            running = true;
-        }
+        this.smoothTicks = smoothing;
+        
+        this.world = new World(720, 480, tileSize, margin, worldType);
+        setPreferredSize(new Dimension(720, 480));
     }
 
     @Override
@@ -66,9 +44,9 @@ public class Game extends JPanel implements Runnable {
         while (threadActive) {
             start = System.currentTimeMillis();
                 
-            if (smoothingTicks > 0) {
+            if (smoothTicks > 0) {
                 world.update();
-                smoothingTicks--;
+                smoothTicks--;
             } 
 
             if (running) {
@@ -107,6 +85,30 @@ public class Game extends JPanel implements Runnable {
         gfx.setColor(new Color(0x2c3e50));
         gfx.fillRect(0, 0, getWidth(), getHeight());
         // Render next frame
-        this.world.render(gfx);
+        world.render(gfx);
+    }
+
+    public synchronized void start() {
+        this.thread = new Thread(this, "Simulation");
+        this.threadActive = true;
+        thread.start(); // call run()
+    }
+
+    public synchronized void stop() {
+        running = false;
+        threadActive = false;
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            thread.interrupt();
+        }
+    }
+
+    public void pause() {
+        if (running) {
+            running = false;
+        } else {
+            running = true;
+        }
     }
 }

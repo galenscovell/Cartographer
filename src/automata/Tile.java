@@ -45,6 +45,7 @@ public class Tile {
 
     public boolean isCorridor(int[][] grid) {
         if (grid[gridX][gridY] == 3) {
+            grid[gridX][gridY] = 1;
             return true;
         } else {
             return false;

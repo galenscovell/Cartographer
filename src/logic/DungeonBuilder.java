@@ -2,7 +2,7 @@
 /**
  * DUNGEONBUILDER CLASS
  * Constructs a new world grid and tileset with dungeon features. 
- * (rooms connected with single-tile corridors)
+ * (rooms connected with corridors)
  */
 
 package logic;
@@ -10,6 +10,7 @@ package logic;
 import automata.Tile;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -17,7 +18,8 @@ public class DungeonBuilder implements Builder {
     private int rows;
     private int columns;
     private int[][] grid;
-    private ArrayList<Tile> tiles;
+    private List<Tile> tiles;
+    private Random generator;
 
     public DungeonBuilder(int columns, int rows) {
         this.columns = columns;
@@ -25,6 +27,7 @@ public class DungeonBuilder implements Builder {
         
         this.grid = new int[columns][rows];
         this.tiles = new ArrayList<Tile>();
+        this.generator = new Random();
     }
 
     public void build() {
@@ -40,9 +43,9 @@ public class DungeonBuilder implements Builder {
     }
 
     public void createRoom(int centerX, int centerY) {
-        Random random = new Random();
-        int roomSize = random.nextInt(3) + 1;
-        ArrayList<Point> perimeterPoints = new ArrayList<Point>();
+        // Possible room sizes from (5x5) to (11x11) tiles
+        int roomSize = generator.nextInt(3) + 2;
+        List<Point> perimeterPoints = new ArrayList<Point>();
         int sumX, sumY;
 
         grid[centerX][centerY] = 1;
@@ -65,12 +68,12 @@ public class DungeonBuilder implements Builder {
             }
         }
         
-        int chosenPoint = random.nextInt(perimeterPoints.size() - 1);
+        int chosenPoint = generator.nextInt(perimeterPoints.size() - 1);
         Point corridorPoint = perimeterPoints.get(chosenPoint);
-        createCorridor(corridorPoint.pointX(), corridorPoint.pointY());
+        findCorridorDirection(corridorPoint.pointX(), corridorPoint.pointY());
     }
 
-    public void createCorridor(int startX, int startY) {
+    public void findCorridorDirection(int startX, int startY) {
         int sumX, sumY;
         String direction = "";
 
@@ -109,35 +112,21 @@ public class DungeonBuilder implements Builder {
     }
 
     public void extendCorridor(String direction, int startX, int startY) {
-        Random random = new Random();
-        int corridorSize = random.nextInt(6) + 3;
+        // Possible corridor length from 4 to 10 tiles
+        int corridorSize = generator.nextInt(6) + 4;
         int currentX = startX;
         int currentY = startY;
         
         for (int i = 0; i < corridorSize; i++) {
-            if (direction.equals("up")) {
+            if (direction.equals("up") && !isOutOfBounds(currentX, currentY - 1)) {
                 currentY -= 1;
-            } else if (direction.equals("right")) {
+            } else if (direction.equals("right") && !isOutOfBounds(currentX + 1, currentY)) {
                 currentX += 1;
-            } else if (direction.equals("down")) {
+            } else if (direction.equals("down") && !isOutOfBounds(currentX, currentY + 1)) {
                 currentY += 1;
-            } else if (direction.equals("left")) {
+            } else if (direction.equals("left") && !isOutOfBounds(currentX - 1, currentY)) {
                 currentX -= 1;
-            }
-
-            if (isOutOfBounds(currentX, currentY)) {
-                if (direction.equals("up")) {
-                    currentY += 1;
-                } else if (direction.equals("right")) {
-                    currentX -= 1;
-                } else if (direction.equals("down")) {
-                    currentY -= 1;
-                } else if (direction.equals("left")) {
-                    currentX += 1;
-                }
-                grid[currentX][currentY] = 3;
-                return;
-            }
+            } 
             grid[currentX][currentY] = 1;
         }
         grid[currentX][currentY] = 3;
@@ -154,7 +143,7 @@ public class DungeonBuilder implements Builder {
     }
 
     public void smooth(Tile tile) {
-        if (tile.isCorridor(grid)) {
+        if (tile.isCorridor(grid) && tile.getNeighbors() < 5) {
             createRoom(tile.getX(), tile.getY());
         }
     }
@@ -163,7 +152,7 @@ public class DungeonBuilder implements Builder {
         return grid;
     }
 
-    public ArrayList<Tile> getTiles() {
+    public List<Tile> getTiles() {
         return tiles;
     }
 }

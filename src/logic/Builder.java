@@ -8,12 +8,12 @@ package logic;
 
 import automata.Tile;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public interface Builder {
     public void build();
     public void smooth(Tile tile);
     public int[][] getGrid();
-    public ArrayList<Tile> getTiles();
+    public List<Tile> getTiles();
 }

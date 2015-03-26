@@ -8,8 +8,10 @@
 package automata;
 
 import logic.Point;
+import logic.World;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 
@@ -24,7 +26,7 @@ public class Explorer {
     }
 
     public boolean movement(World world) {
-        ArrayList<Point> options = new ArrayList<Point>();
+        List<Point> options = new ArrayList<Point>();
         int sumX, sumY;
 
         for (int x = -1; x <= 1; x += 2) {
