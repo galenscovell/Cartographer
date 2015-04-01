@@ -12,9 +12,8 @@ Cartographer
 * Utilization of strong object-oriented design principles including interfaces, clean separation of responsibilities and package organization
 * Exploratory pathfinding unit which traverses world and fills in layout
 * Pause and resume functionality
-* Planned: More build options (Color options)
 * Planned: More tile types (rocks, trees, etc.)
 * Planned: Maze solving unit
 
 <b>Usage:</b>
-<blockquote>Begin the application via the jar file found in the bin directory. :]</blockquote>
+<blockquote>Run from bin/Cartographer.jar</blockquote>

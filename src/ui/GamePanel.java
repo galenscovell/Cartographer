@@ -37,7 +37,6 @@ public class GamePanel extends JPanel implements Runnable {
         setPreferredSize(new Dimension(720, 480));
     }
 
-    @Override
     public void run() {
         long start, end, sleepTime;
 

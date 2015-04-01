@@ -10,7 +10,7 @@ import automata.Explorer;
 import automata.Tile;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,11 +108,11 @@ public class World {
         }
     }
 
-    public void render(Graphics gfx) {
+    public void render(Graphics2D gfx) {
         int screenX, screenY;
         Color floor    = new Color(0x34495e);
         Color wall     = new Color(0x2c3e50);
-        Color explored = new Color(0x2980b9);
+        Color explored = new Color(0x27ae60);
         Color active   = new Color(0xecf0f1);
 
         for (Tile tile : tiles) {
