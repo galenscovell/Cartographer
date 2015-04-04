@@ -6,34 +6,26 @@
 
 package logic;
 
-import automata.Explorer;
-import automata.Tile;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 public class World {
     private int columns;
     private int rows;
-
     private int tileSize;
     private int margin;
 
     private Builder builder;
-    public int[][] grid;
     private List<Tile> tiles;
-
     private Explorer explorer;
     
 
     public World(int width, int height, int tileSize, int margin, String worldType) {
         this.tileSize = tileSize;
         this.margin = margin;
-
         this.columns = width / (tileSize + margin);
         this.rows = height / (tileSize + margin);
 
@@ -46,15 +38,13 @@ public class World {
         }
 
         builder.build();
-
-        this.grid = this.builder.getGrid();
         this.tiles = this.builder.getTiles();
     }
 
     public Point findFloorSpace() {
         Point floorPoint;
         for (Tile tile : tiles) {
-            if (tile.isFloor(grid)) {
+            if (tile.isFloor()) {
                 floorPoint = new Point(tile.getX(), tile.getY());
                 return floorPoint;
             }
@@ -63,46 +53,28 @@ public class World {
     }
 
     public Explorer placeExplorer(Point point) {
-        Explorer explorer = new Explorer(point.pointX(), point.pointY());
+        Explorer explorer = new Explorer(point.getX(), point.getY(), columns, rows, getGrid());
         return explorer;
     }
 
-    public int checkAdjacent(Tile tile) {
-        int sumX, sumY;
-        int floorNeighbors = 0;
-                
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -1; y <= 1; y++) {
-                sumX = tile.getX() + x;
-                sumY = tile.getY() + y;
-                if (sumX == tile.getX() && sumY == tile.getY()) {
-                    continue;
-                }
-                if (isOutOfBounds(sumX, sumY)) {
-                    continue;
-                }
-                if (grid[sumX][sumY] == 1) {
+    public void checkAdjacent() {
+        Tile[][] grid = builder.getGrid();
+
+        for (Tile tile : tiles) {
+            int floorNeighbors = 0;
+            List<Point> neighborPoints = tile.getNeighbors();
+            for (Point point : neighborPoints) {
+                if (grid[point.getX()][point.getY()].isFloor()) {
                     floorNeighbors++;
                 }
             }
-        }
-        return floorNeighbors;
-    }
-
-    public boolean isOutOfBounds(int x, int y) {
-        if (x < 0 || y < 0){
-            return true;
-        } else if (x >= columns || y >= rows){
-            return true;
-        } else {
-            return false;
+            tile.setNeighbors(floorNeighbors);
         }
     }
 
     public void update() {
-        for (Tile tile : tiles) {
-            tile.updateNeighbors(checkAdjacent(tile));
-        }
+        checkAdjacent();
+
         for (Tile tile : tiles) {
             builder.smooth(tile);
         }
@@ -116,11 +88,11 @@ public class World {
         Color active   = new Color(0xecf0f1);
 
         for (Tile tile : tiles) {
-            if (tile.isFloor(grid)) {
+            if (tile.isFloor()) {
                 gfx.setColor(floor);
-            } else if (tile.isWall(grid)) {
+            } else if (tile.isWall()) {
                 gfx.setColor(wall);
-            } else if (tile.isExplored(grid)) {
+            } else if (tile.isExplored()) {
                 gfx.setColor(explored);
             } else {
                 gfx.setColor(active);
@@ -129,5 +101,13 @@ public class World {
             screenY = (tile.getY() * (tileSize + margin)) + 1;
             gfx.fillRect(screenX, screenY, tileSize, tileSize);
         }
+    }
+
+    public List<Tile> getTiles() {
+        return tiles;
+    }
+
+    public Tile[][] getGrid() {
+        return builder.getGrid();
     }
 }

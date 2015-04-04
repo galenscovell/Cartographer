@@ -6,14 +6,12 @@
 
 package logic;
 
-import automata.Tile;
-
 import java.util.List;
 
 
 public interface Builder {
     public void build();
     public void smooth(Tile tile);
-    public int[][] getGrid();
     public List<Tile> getTiles();
+    public Tile[][] getGrid();
 }

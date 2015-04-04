@@ -7,8 +7,6 @@
 
 package logic;
 
-import automata.Tile;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -17,24 +15,21 @@ import java.util.Random;
 public class DungeonBuilder implements Builder {
     private int rows;
     private int columns;
-    private int[][] grid;
-    private List<Tile> tiles;
+    private Tile[][] grid;
     private Random generator;
 
     public DungeonBuilder(int columns, int rows) {
         this.columns = columns;
         this.rows = rows;
-        
-        this.grid = new int[columns][rows];
-        this.tiles = new ArrayList<Tile>();
+        this.grid = new Tile[columns][rows];
         this.generator = new Random();
     }
 
     public void build() {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < columns; x++) {
-                tiles.add(new Tile(x, y));
-                grid[x][y] = 0;
+                // All tiles begin as walls
+                grid[x][y] = new Tile(x, y, 0, columns, rows);
             }
         }
         int midColumn = (columns - 1) / 2;
@@ -48,7 +43,7 @@ public class DungeonBuilder implements Builder {
         List<Point> perimeterPoints = new ArrayList<Point>();
         int sumX, sumY;
 
-        grid[centerX][centerY] = 1;
+        grid[centerX][centerY].setState(1);
         for (int x = -roomSize; x <= roomSize; x++) {
             for (int y = -roomSize; y <= roomSize; y++) {
                 sumX = centerX + x;
@@ -59,18 +54,18 @@ public class DungeonBuilder implements Builder {
                 }
                 if (x == -roomSize || x == roomSize || y == -roomSize || y == roomSize) {
                     if ((x == -roomSize && y == -roomSize) || (x == -roomSize && y == roomSize) || (x == roomSize && y == -roomSize) || (x == roomSize && y == roomSize)) {
-                        grid[sumX][sumY] = 1;
+                        grid[sumX][sumY].setState(1);
                         continue;
                     } 
                     perimeterPoints.add(new Point(sumX, sumY));
                 }
-                grid[sumX][sumY] = 1;
+                grid[sumX][sumY].setState(1);
             }
         }
         
         int chosenPoint = generator.nextInt(perimeterPoints.size() - 1);
         Point corridorPoint = perimeterPoints.get(chosenPoint);
-        findCorridorDirection(corridorPoint.pointX(), corridorPoint.pointY());
+        findCorridorDirection(corridorPoint.getX(), corridorPoint.getY());
     }
 
     public void findCorridorDirection(int startX, int startY) {
@@ -84,7 +79,7 @@ public class DungeonBuilder implements Builder {
             if (isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (grid[sumX][sumY] == 0) {
+            if (grid[sumX][sumY].isWall()) {
                 if (x == -1) {
                     direction = "left";
                 } else if (x == 1) {
@@ -100,7 +95,7 @@ public class DungeonBuilder implements Builder {
             if (isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (grid[sumX][sumY] == 0) {
+            if (grid[sumX][sumY].isWall()) {
                 if (y == -1) {
                     direction = "up";
                 } else if (y == 1) {
@@ -127,9 +122,9 @@ public class DungeonBuilder implements Builder {
             } else if (direction.equals("left") && !isOutOfBounds(currentX - 1, currentY)) {
                 currentX -= 1;
             } 
-            grid[currentX][currentY] = 1;
+            grid[currentX][currentY].setState(1);
         }
-        grid[currentX][currentY] = 3;
+        grid[currentX][currentY].setState(3);
     }
 
     public boolean isOutOfBounds(int x, int y) {
@@ -143,16 +138,23 @@ public class DungeonBuilder implements Builder {
     }
 
     public void smooth(Tile tile) {
-        if (tile.isCorridor(grid) && tile.getNeighbors() < 5) {
+        if (tile.isCorridor() && tile.getFloorNeighbors() < 5) {
             createRoom(tile.getX(), tile.getY());
         }
     }
 
-    public int[][] getGrid() {
-        return grid;
+    public List<Tile> getTiles() {
+        List<Tile> tiles = new ArrayList<Tile>();
+
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < columns; x++) {
+                tiles.add(grid[x][y]);
+            }
+        }
+        return tiles;
     }
 
-    public List<Tile> getTiles() {
-        return tiles;
+    public Tile[][] getGrid() {
+        return grid;
     }
 }

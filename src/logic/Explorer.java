@@ -5,10 +5,7 @@
  * Explorer makes only NESW movements and is replaced once unable to move.
  */
 
-package automata;
-
-import logic.Point;
-import logic.World;
+package logic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +15,17 @@ import java.util.Random;
 public class Explorer {
     private int gridX;
     private int gridY;
+    private int columns;
+    private int rows;
+    private Tile[][] grid;
 
 
-    public Explorer(int x, int y) {
+    public Explorer(int x, int y, int columns, int rows, Tile[][] grid) {
         this.gridX = x;
         this.gridY = y;
+        this.columns = columns;
+        this.rows = rows;
+        this.grid = grid;
     }
 
     public boolean movement(World world) {
@@ -33,10 +36,10 @@ public class Explorer {
             sumX = getX() + x;
             sumY = getY();
 
-            if (world.isOutOfBounds(sumX, sumY)) {
+            if (isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (world.grid[sumX][sumY] == 1) {
+            if (grid[sumX][sumY].isFloor()) {
                 options.add(new Point(sumX, sumY));
             }
         }
@@ -45,30 +48,40 @@ public class Explorer {
             sumX = getX();
             sumY = getY() + y;
 
-            if (world.isOutOfBounds(sumX, sumY)) {
+            if (isOutOfBounds(sumX, sumY)) {
                 continue;
             }
-            if (world.grid[sumX][sumY] == 1) {
+            if (grid[sumX][sumY].isFloor()) {
                 options.add(new Point(sumX, sumY));
             }
         }
 
-        world.grid[gridX][gridY] = 2;
+        grid[gridX][gridY].setState(2);
         if (options.size() > 0) {
             Random random = new Random();
             int choice = random.nextInt(options.size());
             Point chosenPoint = options.get(choice);
-            moveToTile(chosenPoint.pointX(), chosenPoint.pointY(), world.grid);
+            moveToTile(chosenPoint.getX(), chosenPoint.getY());
             return true;
         } else {
             return false;
         }
     }
 
-    public void moveToTile(int newX, int newY, int[][] grid) {
+    public void moveToTile(int newX, int newY) {
         gridX = newX;
         gridY = newY;
-        grid[gridX][gridY] = 3;
+        grid[gridX][gridY].setState(3);
+    }
+
+    public boolean isOutOfBounds(int x, int y) {
+        if (x < 0 || y < 0){
+            return true;
+        } else if (x >= columns || y >= rows){
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public int getX() {

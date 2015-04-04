@@ -18,11 +18,11 @@ public class Point {
         this.y = y;
     }
 
-    public int pointX() {
+    public int getX() {
         return x;
     }
 
-    public int pointY() {
+    public int getY() {
         return y;
     }
 

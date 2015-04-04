@@ -6,7 +6,7 @@
 
 package ui;
 
-import automata.Explorer;
+import logic.Explorer;
 import logic.World;
 import logic.Point;
 
