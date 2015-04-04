@@ -68,7 +68,7 @@ public class World {
                     floorNeighbors++;
                 }
             }
-            tile.setNeighbors(floorNeighbors);
+            tile.setFloorNeighbors(floorNeighbors);
         }
     }
 

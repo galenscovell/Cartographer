@@ -16,13 +16,13 @@ public class Tile {
     private int y;
     private int state;
     private int floorNeighbors;
-    private List<Point> neighbors;
+    private List<Point> neighboringTiles;
 
     public Tile(int x, int y, int state, int columns, int rows) {
         this.x = x;
         this.y = y;
         this.state = state;
-        this.neighbors = findNeighbors(columns, rows);
+        this.neighboringTiles = findNeighbors(columns, rows);
     }
 
     public boolean isWall() {
@@ -58,22 +58,8 @@ public class Tile {
         }
     }
 
-    public boolean isOutOfBounds(int i, int j, int columns, int rows) {
-        if (i < 0 || j < 0){
-            return true;
-        } else if (i >= columns || j >= rows){
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public void setNeighbors(int value) {
+    public void setFloorNeighbors(int value) {
         floorNeighbors = value;
-    }
-
-    public List<Point> getNeighbors() {
-        return neighbors;
     }
 
     public int getFloorNeighbors() {
@@ -92,7 +78,12 @@ public class Tile {
         return y;
     }
 
+    public List<Point> getNeighbors() {
+        return neighboringTiles;
+    }
+
     private List<Point> findNeighbors(int columns, int rows) {
+        // Compute neighboring tiles only once at object construction
         List<Point> points = new ArrayList<Point>();
         int sumX, sumY;
 
@@ -108,5 +99,15 @@ public class Tile {
             }
         }
         return points;
+    }
+
+    private boolean isOutOfBounds(int i, int j, int columns, int rows) {
+        if (i < 0 || j < 0){
+            return true;
+        } else if (i >= columns || j >= rows){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
