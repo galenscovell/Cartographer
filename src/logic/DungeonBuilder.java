@@ -13,16 +13,13 @@ import java.util.Random;
 
 
 public class DungeonBuilder implements Builder {
-    private int rows;
-    private int columns;
+    private int rows, columns;
     private Tile[][] grid;
-    private Random generator;
 
     public DungeonBuilder(int columns, int rows) {
         this.columns = columns;
         this.rows = rows;
         this.grid = new Tile[columns][rows];
-        this.generator = new Random();
     }
 
     public void build() {
@@ -32,12 +29,15 @@ public class DungeonBuilder implements Builder {
                 grid[x][y] = new Tile(x, y, 0, columns, rows);
             }
         }
+
+        // Find center of Tile grid to create first room
         int midColumn = (columns - 1) / 2;
         int midRow = (rows - 1) / 2;
         createRoom(midColumn, midRow);
     }
 
     public void createRoom(int centerX, int centerY) {
+        Random generator = new Random();
         // Possible room sizes from (5x5) to (11x11) tiles
         int roomSize = generator.nextInt(3) + 2;
         List<Point> perimeterPoints = new ArrayList<Point>();
@@ -65,7 +65,7 @@ public class DungeonBuilder implements Builder {
         
         int chosenPoint = generator.nextInt(perimeterPoints.size() - 1);
         Point corridorPoint = perimeterPoints.get(chosenPoint);
-        findCorridorDirection(corridorPoint.getX(), corridorPoint.getY());
+        findCorridorDirection(corridorPoint.x, corridorPoint.y);
     }
 
     public void findCorridorDirection(int startX, int startY) {
@@ -107,6 +107,7 @@ public class DungeonBuilder implements Builder {
     }
 
     public void extendCorridor(String direction, int startX, int startY) {
+        Random generator = new Random();
         // Possible corridor length from 4 to 10 tiles
         int corridorSize = generator.nextInt(6) + 4;
         int currentX = startX;
@@ -139,7 +140,7 @@ public class DungeonBuilder implements Builder {
 
     public void smooth(Tile tile) {
         if (tile.isCorridor() && tile.getFloorNeighbors() < 5) {
-            createRoom(tile.getX(), tile.getY());
+            createRoom(tile.x, tile.y);
         }
     }
 

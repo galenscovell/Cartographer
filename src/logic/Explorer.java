@@ -13,16 +13,14 @@ import java.util.Random;
 
 
 public class Explorer {
-    private int gridX;
-    private int gridY;
-    private int columns;
-    private int rows;
+    public int x, y;
+    private int columns, rows;
     private Tile[][] grid;
 
 
     public Explorer(int x, int y, int columns, int rows, Tile[][] grid) {
-        this.gridX = x;
-        this.gridY = y;
+        this.x = x;
+        this.y = y;
         this.columns = columns;
         this.rows = rows;
         this.grid = grid;
@@ -32,9 +30,9 @@ public class Explorer {
         List<Point> options = new ArrayList<Point>();
         int sumX, sumY;
 
-        for (int x = -1; x <= 1; x += 2) {
-            sumX = getX() + x;
-            sumY = getY();
+        for (int dx = -1; dx <= 1; dx += 2) {
+            sumX = x + dx;
+            sumY = y;
 
             if (isOutOfBounds(sumX, sumY)) {
                 continue;
@@ -44,9 +42,9 @@ public class Explorer {
             }
         }
 
-        for (int y = -1; y <= 1; y += 2) {
-            sumX = getX();
-            sumY = getY() + y;
+        for (int dy = -1; dy <= 1; dy += 2) {
+            sumX = x;
+            sumY = y + dy;
 
             if (isOutOfBounds(sumX, sumY)) {
                 continue;
@@ -56,12 +54,12 @@ public class Explorer {
             }
         }
 
-        grid[gridX][gridY].setState(2);
+        grid[x][y].setState(2);
         if (options.size() > 0) {
             Random random = new Random();
             int choice = random.nextInt(options.size());
             Point chosenPoint = options.get(choice);
-            moveToTile(chosenPoint.getX(), chosenPoint.getY());
+            moveToTile(chosenPoint.x, chosenPoint.y);
             return true;
         } else {
             return false;
@@ -69,9 +67,9 @@ public class Explorer {
     }
 
     public void moveToTile(int newX, int newY) {
-        gridX = newX;
-        gridY = newY;
-        grid[gridX][gridY].setState(3);
+        x = newX;
+        y = newY;
+        grid[x][y].setState(3);
     }
 
     public boolean isOutOfBounds(int x, int y) {
@@ -84,15 +82,7 @@ public class Explorer {
         }
     }
 
-    public int getX() {
-        return gridX;
-    }
-
-    public int getY() {
-        return gridY;
-    }
-
     public String toString() {
-        return "Explorer at [" + gridX + ", " + gridY + "]";
+        return "Explorer at [" + x + ", " + y + "]";
     }
 }

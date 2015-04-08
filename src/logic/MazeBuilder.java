@@ -13,8 +13,7 @@ import java.util.Random;
 
 
 public class MazeBuilder implements Builder {
-    private int rows;
-    private int columns;
+    private int rows, columns;
     private Tile[][] grid;
 
     public MazeBuilder(int columns, int rows) {

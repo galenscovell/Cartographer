@@ -13,10 +13,8 @@ import java.util.List;
 
 
 public class World {
-    private int columns;
-    private int rows;
-    private int tileSize;
-    private int margin;
+    private int columns, rows;
+    private int tileSize, margin;
 
     private Builder builder;
     private List<Tile> tiles;
@@ -45,7 +43,7 @@ public class World {
         Point floorPoint;
         for (Tile tile : tiles) {
             if (tile.isFloor()) {
-                floorPoint = new Point(tile.getX(), tile.getY());
+                floorPoint = new Point(tile.x, tile.y);
                 return floorPoint;
             }
         }
@@ -53,7 +51,7 @@ public class World {
     }
 
     public Explorer placeExplorer(Point point) {
-        Explorer explorer = new Explorer(point.getX(), point.getY(), columns, rows, getGrid());
+        Explorer explorer = new Explorer(point.x, point.y, columns, rows, getGrid());
         return explorer;
     }
 
@@ -64,7 +62,7 @@ public class World {
             int floorNeighbors = 0;
             List<Point> neighborPoints = tile.getNeighbors();
             for (Point point : neighborPoints) {
-                if (grid[point.getX()][point.getY()].isFloor()) {
+                if (grid[point.x][point.y].isFloor()) {
                     floorNeighbors++;
                 }
             }
@@ -97,8 +95,8 @@ public class World {
             } else {
                 gfx.setColor(active);
             }
-            screenX = (tile.getX() * (tileSize + margin)) + 1;
-            screenY = (tile.getY() * (tileSize + margin)) + 1;
+            screenX = (tile.x * (tileSize + margin)) + 1;
+            screenY = (tile.y * (tileSize + margin)) + 1;
             gfx.fillRect(screenX, screenY, tileSize, tileSize);
         }
     }

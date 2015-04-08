@@ -12,8 +12,7 @@ import java.util.List;
 
 
 public class Tile {
-    private int x;
-    private int y;
+    public int x, y;
     private int state;
     private int floorNeighbors;
     private List<Point> neighboringTiles;
@@ -26,36 +25,19 @@ public class Tile {
     }
 
     public boolean isWall() {
-        if (state == 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return state == 0;
     }
 
     public boolean isFloor() {
-        if (state == 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return state == 1;
     }
 
     public boolean isExplored() {
-        if (state == 2) {
-            return true;
-        } else {
-            return false;
-        }
+        return state == 2;
     }
 
     public boolean isCorridor() {
-        if (state == 3) {
-            state = 1;
-            return true;
-        } else {
-            return false;
-        }
+        return state == 3;
     }
 
     public void setFloorNeighbors(int value) {
@@ -68,14 +50,6 @@ public class Tile {
 
     public void setState(int value) {
         state = value;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 
     public List<Point> getNeighbors() {

@@ -13,8 +13,7 @@ import java.util.Random;
 
 
 public class CaveBuilder implements Builder {
-    private int rows;
-    private int columns;
+    private int rows, columns;
     private Tile[][] grid;
 
     public CaveBuilder(int columns, int rows) {
